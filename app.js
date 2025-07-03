@@ -88,6 +88,9 @@ app.use((req, res, next) => {
 //   let registeredUser = await User.register(fakeuser, "raman");
 //   res.send(registeredUser);
 // });
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
 
 app.use("/listings", listingRouter);
 app.use("/listings", reviewRouter);
