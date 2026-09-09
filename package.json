@@ -1,16 +1,24 @@
 {
-  "engines":{
+  "engines": {
     "node": "20.17.0"
   },
-  "name": "majorproject",
+  "name": "wanderlust-web-app",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Full-stack travel accommodation platform built with Node.js, Express, MongoDB and EJS",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "test": "echo \"Tests not configured yet\" && exit 0"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb",
+    "mongoose",
+    "ejs",
+    "travel"
+  ],
+  "author": "Raman-2915",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
