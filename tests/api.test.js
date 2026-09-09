@@ -82,6 +82,30 @@ describe("Wanderlust REST API", () => {
     });
   });
 
+  test("POST booking requires authentication", async () => {
+    const response = await request(app)
+      .post("/api/v1/listings/507f1f77bcf86cd799439011/bookings")
+      .send({ booking: { checkIn: "2030-06-10", checkOut: "2030-06-12", guests: 2 } });
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      success: false,
+      message: "Authentication required",
+    });
+  });
+
+  test("DELETE booking requires authentication", async () => {
+    const response = await request(app).delete(
+      "/api/v1/bookings/507f1f77bcf86cd799439012"
+    );
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      success: false,
+      message: "Authentication required",
+    });
+  });
+
   test("unknown API route returns JSON instead of an HTML error page", async () => {
     const response = await request(app).get("/api/v1/does-not-exist");
 
