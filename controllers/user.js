@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const Listing = require("../models/listing");
+const Review = require("../models/review");
 
 module.exports.renderSignUpForm = (req, res) => {
   res.render("users/signup.ejs");
@@ -41,5 +43,26 @@ module.exports.userLogout = (req, res, next) => {
     }
     req.flash("success", "You are logged out");
     res.redirect("/listings");
+  });
+};
+
+module.exports.renderDashboard = async (req, res) => {
+  const user = await User.findById(req.user._id).populate({
+    path: "favorites",
+    populate: { path: "owner", select: "username" },
+  });
+
+  const [listings, reviews] = await Promise.all([
+    Listing.find({ owner: req.user._id }).sort({ createdAt: -1 }),
+    Review.find({ author: req.user._id })
+      .populate("listing", "title")
+      .sort({ createdAt: -1 }),
+  ]);
+
+  res.render("users/dashboard.ejs", {
+    user,
+    listings,
+    favorites: user.favorites || [],
+    reviews,
   });
 };
