@@ -4,6 +4,12 @@ const Booking = require("../models/booking.js");
 const escapeRegex = (value) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+const parseDate = (value) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value || "")) return null;
+  const date = new Date(`${value}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
 module.exports.listListings = async (req, res) => {
   const { search = "", country = "", sort = "newest" } = req.query;
   const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
@@ -49,10 +55,7 @@ module.exports.getListing = async (req, res) => {
     .lean();
 
   if (!listing) {
-    return res.status(404).json({
-      success: false,
-      message: "Listing not found",
-    });
+    return res.status(404).json({ success: false, message: "Listing not found" });
   }
 
   const confirmedBookings = await Booking.find({
@@ -64,13 +67,69 @@ module.exports.getListing = async (req, res) => {
     .sort({ checkIn: 1 })
     .lean();
 
-  res.json({
-    success: true,
-    data: {
-      ...listing,
-      availability: confirmedBookings,
-    },
+  res.json({ success: true, data: { ...listing, availability: confirmedBookings } });
+};
+
+module.exports.createBooking = async (req, res) => {
+  const listing = await Listing.findById(req.params.id);
+  if (!listing) return res.status(404).json({ success: false, message: "Listing not found" });
+
+  if (listing.owner.equals(req.user._id)) {
+    return res.status(403).json({ success: false, message: "You cannot book your own listing" });
+  }
+
+  const { checkIn, checkOut, guests } = req.body.booking || req.body;
+  const start = parseDate(checkIn);
+  const end = parseDate(checkOut);
+  const guestCount = Number(guests);
+
+  if (!start || !end || end <= start || !Number.isInteger(guestCount) || guestCount < 1) {
+    return res.status(400).json({ success: false, message: "Invalid booking dates or guest count" });
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (start < today) {
+    return res.status(400).json({ success: false, message: "Check-in date cannot be in the past" });
+  }
+
+  const conflict = await Booking.findOne({
+    listing: listing._id,
+    status: "confirmed",
+    checkIn: { $lt: end },
+    checkOut: { $gt: start },
   });
+
+  if (conflict) {
+    return res.status(409).json({ success: false, message: "These dates are already booked" });
+  }
+
+  const nights = Math.ceil((end - start) / 86400000);
+  const booking = await Booking.create({
+    listing: listing._id,
+    guest: req.user._id,
+    checkIn: start,
+    checkOut: end,
+    guests: guestCount,
+    totalPrice: nights * listing.price,
+  });
+
+  await booking.populate("listing", "title location country price");
+  res.status(201).json({ success: true, data: booking });
+};
+
+module.exports.cancelBooking = async (req, res) => {
+  const booking = await Booking.findOneAndUpdate(
+    { _id: req.params.bookingId, guest: req.user._id, status: "confirmed" },
+    { status: "cancelled" },
+    { new: true }
+  ).populate("listing", "title location country price");
+
+  if (!booking) {
+    return res.status(404).json({ success: false, message: "Booking not found or already cancelled" });
+  }
+
+  res.json({ success: true, data: booking });
 };
 
 module.exports.health = (req, res) => {
