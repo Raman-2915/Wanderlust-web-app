@@ -22,6 +22,11 @@ const reviewSchema = new Schema({
     ref: "User",
     required: true,
   },
+  listing: {
+    type: Schema.Types.ObjectId,
+    ref: "Listing",
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Review", reviewSchema);
