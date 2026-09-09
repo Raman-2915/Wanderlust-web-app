@@ -11,6 +11,7 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
+const bookingRouter = require("./routes/booking.js");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
@@ -93,6 +94,7 @@ app.get("/", (req, res) => {
 
 app.use("/listings", listingRouter);
 app.use("/listings", reviewRouter);
+app.use("/listings", bookingRouter);
 app.use("/", userRouter);
 
 app.all(/.*/, (req, res, next) => {
