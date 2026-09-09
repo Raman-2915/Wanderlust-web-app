@@ -20,6 +20,8 @@ A full-stack travel accommodation platform for discovering, creating, reviewing,
 - Server-side booking conflict detection using date-overlap queries
 - Booking cancellation for the authenticated guest
 - Automatic total-price calculation based on number of nights
+- REST API for listing discovery and availability
+- Automated API tests with Jest and Supertest
 - Flash messages and centralized error handling
 - Responsive EJS views using Bootstrap
 
@@ -32,29 +34,48 @@ A full-stack travel accommodation platform for discovering, creating, reviewing,
 - **Image Storage:** Cloudinary, Multer
 - **Validation:** Joi + Mongoose
 - **Session Store:** connect-mongo
+- **API Testing:** Jest, Supertest
 
 ## Architecture
 
 ```text
-Browser
-   |
-   v
+Browser / API Client
+        |
+        v
 Express Routes
-   |
-   v
+        |
+        v
 Middleware / Authorization / Validation
-   |
-   v
+        |
+        v
 Controllers
-   |
-   v
+        |
+        v
 Mongoose Models
-   |
-   v
+        |
+        v
 MongoDB Atlas
 ```
 
 The application follows an MVC-style structure with separate routes, controllers, models, middleware, utilities and views.
+
+## REST API
+
+Base URL: `/api/v1`
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/health` | API health check |
+| GET | `/listings` | Search, filter, sort and paginate listings |
+| GET | `/listings/:id` | Get a listing with confirmed booking intervals |
+
+Example:
+
+```text
+GET /api/v1/listings?search=Delhi&sort=priceLow&page=1&limit=9
+```
+
+API responses use JSON with a consistent `success` flag and pagination metadata where applicable. API errors return JSON instead of the HTML error page used by browser routes.
 
 ## Booking Logic
 
@@ -69,6 +90,23 @@ existing.checkOut > requested.checkIn
 ```
 
 This allows a guest to check in on the same date another guest checks out while preventing overlapping stays.
+
+## Automated Testing
+
+Run the API test suite with:
+
+```bash
+npm test
+```
+
+Additional commands:
+
+```bash
+npm run test:watch
+npm run test:coverage
+```
+
+The current suite covers API health, paginated listing responses, missing-listing handling and JSON API error responses. Database calls are mocked so the API contract can be tested without requiring a live MongoDB connection.
 
 ## Local Setup
 
@@ -115,6 +153,7 @@ middleware.js  # Authentication, authorization and validation
 views/         # EJS templates
 public/        # CSS and client-side JavaScript
 utils/         # Error and async utilities
+tests/         # Automated API tests
 init/          # Database seed data
 ```
 
