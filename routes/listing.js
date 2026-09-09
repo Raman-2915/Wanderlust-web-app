@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
-const Listing = require("../models/listing.js");
 const { isLoggedIn, validateListing, isOwner } = require("../middleware.js");
 const listingController = require("../controllers/listing.js");
 const multer = require("multer");
@@ -41,6 +40,18 @@ router
     wrapAsync(listingController.editListing)
   )
   .get(wrapAsync(listingController.showListing));
+
+router.post(
+  "/:id/favorite",
+  isLoggedIn,
+  wrapAsync(listingController.addFavorite)
+);
+
+router.delete(
+  "/:id/favorite",
+  isLoggedIn,
+  wrapAsync(listingController.removeFavorite)
+);
 
 router.get(
   "/:id/edit",
