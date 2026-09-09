@@ -1,8 +1,68 @@
 const Listing = require("../models/listing");
 
 module.exports.index = async (req, res) => {
-  const allListings = await Listing.find({}).sort({ _id: -1 });
-  res.render("listings/index.ejs", { allListings });
+  const {
+    search = "",
+    country = "",
+    minPrice = "",
+    maxPrice = "",
+    sort = "newest",
+  } = req.query;
+
+  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+  const limit = 9;
+  const filter = {};
+
+  if (search.trim()) {
+    const searchRegex = new RegExp(search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+    filter.$or = [
+      { title: searchRegex },
+      { location: searchRegex },
+      { country: searchRegex },
+    ];
+  }
+
+  if (country.trim()) {
+    filter.country = new RegExp(country.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+  }
+
+  if (minPrice !== "" || maxPrice !== "") {
+    filter.price = {};
+    if (minPrice !== "" && !Number.isNaN(Number(minPrice))) {
+      filter.price.$gte = Number(minPrice);
+    }
+    if (maxPrice !== "" && !Number.isNaN(Number(maxPrice))) {
+      filter.price.$lte = Number(maxPrice);
+    }
+  }
+
+  const sortOptions = {
+    newest: { createdAt: -1 },
+    oldest: { createdAt: 1 },
+    priceLow: { price: 1 },
+    priceHigh: { price: -1 },
+  };
+
+  const sortBy = sortOptions[sort] || sortOptions.newest;
+  const totalListings = await Listing.countDocuments(filter);
+  const totalPages = Math.max(Math.ceil(totalListings / limit), 1);
+  const currentPage = Math.min(page, totalPages);
+
+  const allListings = await Listing.find(filter)
+    .sort(sortBy)
+    .skip((currentPage - 1) * limit)
+    .limit(limit);
+
+  res.render("listings/index.ejs", {
+    allListings,
+    search,
+    country,
+    minPrice,
+    maxPrice,
+    sort,
+    currentPage,
+    totalPages,
+  });
 };
 
 module.exports.renderNewForm = (req, res) => {
