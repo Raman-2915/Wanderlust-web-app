@@ -20,7 +20,9 @@ A full-stack travel accommodation platform for discovering, creating, reviewing,
 - Server-side booking conflict detection using date-overlap queries
 - Booking cancellation for the authenticated guest
 - Automatic total-price calculation based on number of nights
-- REST API for listing discovery and availability
+- REST API for listing discovery, availability and bookings
+- JSON authentication errors for protected API routes
+- Lightweight API rate limiting with `Retry-After` responses
 - Automated API tests with Jest and Supertest
 - Flash messages and centralized error handling
 - Responsive EJS views using Bootstrap
@@ -45,7 +47,7 @@ Browser / API Client
 Express Routes
         |
         v
-Middleware / Authorization / Validation
+Middleware / Authorization / Rate Limiting
         |
         v
 Controllers
@@ -63,19 +65,33 @@ The application follows an MVC-style structure with separate routes, controllers
 
 Base URL: `/api/v1`
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| GET | `/health` | API health check |
-| GET | `/listings` | Search, filter, sort and paginate listings |
-| GET | `/listings/:id` | Get a listing with confirmed booking intervals |
+| Method | Endpoint | Auth | Purpose |
+| --- | --- | --- | --- |
+| GET | `/health` | No | API health check |
+| GET | `/listings` | No | Search, filter, sort and paginate listings |
+| GET | `/listings/:id` | No | Get a listing with confirmed booking intervals |
+| POST | `/listings/:id/bookings` | Yes | Create a booking after availability validation |
+| DELETE | `/bookings/:bookingId` | Yes | Cancel the authenticated user's booking |
 
-Example:
+Example listing query:
 
 ```text
 GET /api/v1/listings?search=Delhi&sort=priceLow&page=1&limit=9
 ```
 
-API responses use JSON with a consistent `success` flag and pagination metadata where applicable. API errors return JSON instead of the HTML error page used by browser routes.
+Example booking body:
+
+```json
+{
+  "checkIn": "2026-10-10",
+  "checkOut": "2026-10-13",
+  "guests": 2
+}
+```
+
+Protected API requests use the existing Passport session authentication. Unauthenticated API requests receive HTTP `401` JSON responses rather than browser redirects.
+
+The API has a lightweight per-IP request limit of 100 requests per minute. When the limit is exceeded, the API responds with HTTP `429` and a `Retry-After` header.
 
 ## Booking Logic
 
@@ -149,10 +165,11 @@ The server uses `PORT` when supplied by the deployment environment and falls bac
 controllers/   # Request/business logic
 models/        # Mongoose schemas
 routes/        # Express routes
-middleware.js  # Authentication, authorization and validation
+middleware.js  # Browser authentication/authorization/validation
 views/         # EJS templates
 public/        # CSS and client-side JavaScript
 utils/         # Error and async utilities
+middleware/    # API authentication and rate limiting
 tests/         # Automated API tests
 init/          # Database seed data
 ```
@@ -167,3 +184,4 @@ init/          # Database seed data
 - Users cannot book their own listings.
 - Uploaded images are restricted to JPG/PNG and limited to 5 MB.
 - Session cookies use HTTP-only and production secure settings.
+- API routes have authentication checks and rate limiting.
