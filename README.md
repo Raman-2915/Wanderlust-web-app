@@ -1,11 +1,13 @@
 # Wanderlust
 
-A full-stack travel accommodation platform for discovering, creating, reviewing and managing property listings.
+A full-stack travel accommodation platform for discovering, creating, reviewing, saving and booking property listings.
 
 ## Features
 
 - User registration and login with Passport.js
 - Session-based authentication with MongoDB session storage
+- User dashboard with listings, wishlist, reviews and bookings
+- Persistent wishlist/favorites using MongoDB atomic `$addToSet` / `$pull` operations
 - Listing CRUD with owner authorization
 - Cloudinary image uploads
 - Server-side Joi validation
@@ -14,6 +16,10 @@ A full-stack travel accommodation platform for discovering, creating, reviewing 
 - Sorting by newest, oldest and price
 - Server-side pagination
 - Reviews and ratings with author-level authorization
+- Booking workflow with check-in/check-out dates and guest count
+- Server-side booking conflict detection using date-overlap queries
+- Booking cancellation for the authenticated guest
+- Automatic total-price calculation based on number of nights
 - Flash messages and centralized error handling
 - Responsive EJS views using Bootstrap
 
@@ -24,7 +30,7 @@ A full-stack travel accommodation platform for discovering, creating, reviewing 
 - **Authentication:** Passport.js, Passport Local Mongoose
 - **Templating:** EJS, EJS-Mate
 - **Image Storage:** Cloudinary, Multer
-- **Validation:** Joi
+- **Validation:** Joi + Mongoose
 - **Session Store:** connect-mongo
 
 ## Architecture
@@ -49,6 +55,20 @@ MongoDB Atlas
 ```
 
 The application follows an MVC-style structure with separate routes, controllers, models, middleware, utilities and views.
+
+## Booking Logic
+
+Bookings use a half-open date interval: `[checkIn, checkOut)`.
+
+A new booking is rejected when an existing confirmed booking overlaps it:
+
+```text
+existing.checkIn < requested.checkOut
+AND
+existing.checkOut > requested.checkIn
+```
+
+This allows a guest to check in on the same date another guest checks out while preventing overlapping stays.
 
 ## Local Setup
 
@@ -104,5 +124,7 @@ init/          # Database seed data
 - Authenticated users are required for protected operations.
 - Listing owners can modify or delete only their own listings.
 - Review authors can delete only their own reviews.
+- Booking cancellation is restricted to the authenticated booking guest.
+- Users cannot book their own listings.
 - Uploaded images are restricted to JPG/PNG and limited to 5 MB.
 - Session cookies use HTTP-only and production secure settings.
