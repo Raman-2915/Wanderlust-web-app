@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const Listing = require("../models/listing");
 const Review = require("../models/review");
+const Booking = require("../models/booking");
 
 module.exports.renderSignUpForm = (req, res) => {
   res.render("users/signup.ejs");
@@ -13,9 +14,7 @@ module.exports.userSignUp = async (req, res, next) => {
     const registeredUser = await User.register(newUser, password);
 
     req.login(registeredUser, (err) => {
-      if (err) {
-        return next(err);
-      }
+      if (err) return next(err);
       req.flash("success", "Welcome to Wanderlust!");
       res.redirect("/listings");
     });
@@ -38,9 +37,7 @@ module.exports.userLogin = async (req, res) => {
 
 module.exports.userLogout = (req, res, next) => {
   req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
     req.flash("success", "You are logged out");
     res.redirect("/listings");
   });
@@ -52,11 +49,14 @@ module.exports.renderDashboard = async (req, res) => {
     populate: { path: "owner", select: "username" },
   });
 
-  const [listings, reviews] = await Promise.all([
+  const [listings, reviews, bookings] = await Promise.all([
     Listing.find({ owner: req.user._id }).sort({ createdAt: -1 }),
     Review.find({ author: req.user._id })
       .populate("listing", "title")
       .sort({ createdAt: -1 }),
+    Booking.find({ guest: req.user._id })
+      .populate("listing", "title image location country price")
+      .sort({ checkIn: 1 }),
   ]);
 
   res.render("users/dashboard.ejs", {
@@ -64,5 +64,6 @@ module.exports.renderDashboard = async (req, res) => {
     listings,
     favorites: user.favorites || [],
     reviews,
+    bookings,
   });
 };
