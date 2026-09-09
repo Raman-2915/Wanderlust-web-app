@@ -13,24 +13,10 @@ const bookingSchema = new Schema(
       ref: "User",
       required: true,
     },
-    checkIn: {
-      type: Date,
-      required: true,
-    },
-    checkOut: {
-      type: Date,
-      required: true,
-    },
-    guests: {
-      type: Number,
-      required: true,
-      min: 1,
-    },
-    totalPrice: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
+    checkIn: { type: Date, required: true },
+    checkOut: { type: Date, required: true },
+    guests: { type: Number, required: true, min: 1 },
+    totalPrice: { type: Number, required: true, min: 0 },
     status: {
       type: String,
       enum: ["confirmed", "cancelled"],
@@ -39,6 +25,13 @@ const bookingSchema = new Schema(
   },
   { timestamps: true }
 );
+
+bookingSchema.pre("validate", function (next) {
+  if (this.checkIn && this.checkOut && this.checkOut <= this.checkIn) {
+    this.invalidate("checkOut", "Check-out must be after check-in");
+  }
+  next();
+});
 
 bookingSchema.index({ listing: 1, checkIn: 1, checkOut: 1, status: 1 });
 bookingSchema.index({ guest: 1, createdAt: -1 });
