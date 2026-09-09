@@ -1,6 +1,7 @@
-if (process.env.NODE_ENV != "production") {
+if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -18,19 +19,21 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const userRouter = require("./routes/user.js");
 
-// const Mongo_URL = "mongodb://127.0.0.1:27017/wanderlust";
 const db_url = process.env.ATLASDB_URL;
 
 main()
   .then(() => {
-    console.log("Connection successfull to database");
+    console.log("Connection successful to database");
   })
   .catch((err) => {
-    console.log(err);
+    console.error("Database connection failed:", err);
+    process.exit(1);
   });
 
 async function main() {
-  // await mongoose.connect(Mongo_URL);
+  if (!db_url) {
+    throw new Error("ATLASDB_URL is not configured");
+  }
   await mongoose.connect(db_url);
 }
 
@@ -48,18 +51,22 @@ const store = MongoStore.create({
   },
   touchAfter: 24 * 3600,
 });
-store.on("error", () => {
-  console.log("Error in mongo Store", err);
+
+store.on("error", (err) => {
+  console.error("Mongo session store error:", err);
 });
+
 const sessionOptions = {
   store,
   secret: process.env.SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
   },
 };
 
@@ -80,14 +87,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.get("/demouser", async (req, res) => {
-//   let fakeuser = new User({
-//     email: "student@gmail.com",
-//     username: "sigma-student",
-//   });
-//   let registeredUser = await User.register(fakeuser, "raman");
-//   res.send(registeredUser);
-// });
 app.get("/", (req, res) => {
   res.redirect("/listings");
 });
@@ -102,10 +101,11 @@ app.all(/.*/, (req, res, next) => {
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message = "Something went wrong!" } = err;
-  // res.status(statusCode).render(message);
+  console.error(err);
   res.status(statusCode).render("listings/error.ejs", { message });
 });
 
-app.listen(8080, () => {
-  console.log("server is listening to Port 8080");
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
 });
