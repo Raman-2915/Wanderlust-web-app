@@ -9,18 +9,18 @@ const listing = {
   country: "India",
 };
 
-const Listing = {
+const mockListingModel = {
   countDocuments: jest.fn(),
   find: jest.fn(),
   findById: jest.fn(),
 };
 
-const Booking = {
+const mockBookingModel = {
   find: jest.fn(),
 };
 
-jest.mock("../models/listing.js", () => Listing);
-jest.mock("../models/booking.js", () => Booking);
+jest.mock("../models/listing.js", () => mockListingModel);
+jest.mock("../models/booking.js", () => mockBookingModel);
 
 const request = require("supertest");
 const { app } = require("../app.js");
@@ -49,8 +49,8 @@ describe("Wanderlust REST API", () => {
   });
 
   test("GET /api/v1/listings returns paginated listings", async () => {
-    Listing.countDocuments.mockResolvedValue(1);
-    Listing.find.mockReturnValue(chain([listing]));
+    mockListingModel.countDocuments.mockResolvedValue(1);
+    mockListingModel.find.mockReturnValue(chain([listing]));
 
     const response = await request(app)
       .get("/api/v1/listings")
@@ -69,7 +69,7 @@ describe("Wanderlust REST API", () => {
   });
 
   test("GET /api/v1/listings/:id returns 404 JSON for missing listing", async () => {
-    Listing.findById.mockReturnValue(chain(null));
+    mockListingModel.findById.mockReturnValue(chain(null));
 
     const response = await request(app).get(
       "/api/v1/listings/507f1f77bcf86cd799439011"
