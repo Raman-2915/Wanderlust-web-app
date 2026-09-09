@@ -1,171 +1,113 @@
 <% layout("/layouts/boilerplate.ejs") -%>
 
-<style>
-  .filters {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-top: 1.5rem;
-  }
+<div class="listing-page">
+  <section class="listing-hero">
+    <span class="eyebrow">Roamly stays</span>
+    <h1>Find a place worth remembering.</h1>
+    <p>Browse distinctive stays, hidden corners and comfortable spaces for your next escape.</p>
+  </section>
 
-  .filter {
-    text-align: center;
-    opacity: 0.7;
-  }
-
-  .filter:hover {
-    opacity: 1;
-    cursor: pointer;
-  }
-
-  .filter p {
-    font-size: 0.8rem;
-    margin-bottom: 0;
-  }
-
-  .tax-info {
-    display: none;
-  }
-
-  .tax-toggle {
-    border: 1px solid #dee2e6;
-    border-radius: 1rem;
-    padding: 0.75rem 1rem;
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-  }
-
-  .listing-controls {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 0.75rem;
-    padding: 1rem;
-    margin-top: 1rem;
-  }
-
-  .pagination {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
-</style>
-
-<div class="filters">
-  <div class="filter"><div><i class="fa-solid fa-fire"></i></div><p>Trending</p></div>
-  <div class="filter"><div><i class="fa-solid fa-bed"></i></div><p>Rooms</p></div>
-  <div class="filter"><div><i class="fa-solid fa-mountain-city"></i></div><p>Iconic Cities</p></div>
-  <div class="filter"><div><i class="fa-solid fa-mountain"></i></div><p>Mountains</p></div>
-  <div class="filter"><div><i class="fa-solid fa-person-swimming"></i></div><p>Amazing Pools</p></div>
-  <div class="filter"><div><i class="fa-solid fa-campground"></i></div><p>Camping</p></div>
-
-  <div class="tax-toggle">
-    <div class="form-check form-switch mb-0">
-      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-      <label class="form-check-label" for="flexSwitchCheckDefault">Display tax</label>
+  <div class="filters">
+    <div class="filter"><i class="fa-solid fa-fire"></i><p>Trending</p></div>
+    <div class="filter"><i class="fa-solid fa-house"></i><p>Private homes</p></div>
+    <div class="filter"><i class="fa-solid fa-city"></i><p>City stays</p></div>
+    <div class="filter"><i class="fa-solid fa-mountain-sun"></i><p>Nature</p></div>
+    <div class="filter"><i class="fa-solid fa-water"></i><p>By the water</p></div>
+    <div class="filter"><i class="fa-solid fa-campground"></i><p>Getaways</p></div>
+    <div class="tax-toggle">
+      <div class="form-check form-switch mb-0">
+        <input class="form-check-input" type="checkbox" role="switch" id="themeSwitch" aria-label="Toggle dark theme" />
+        <label class="form-check-label" for="themeSwitch"><i class="fa-solid fa-circle-half-stroke me-1"></i>Dark mode</label>
+      </div>
     </div>
   </div>
-</div>
 
-<form class="listing-controls row g-2" action="/listings" method="GET">
-  <div class="col-md-3">
-    <label class="form-label" for="country">Country</label>
-    <input class="form-control" id="country" name="country" value="<%= country %>" placeholder="e.g. India">
-  </div>
+  <form class="listing-controls row g-3" action="/listings" method="GET">
+    <div class="col-lg-3 col-md-6">
+      <label class="form-label" for="country">Destination</label>
+      <input class="form-control" id="country" name="country" value="<%= country %>" placeholder="Country or region" />
+    </div>
+    <div class="col-lg-2 col-md-6">
+      <label class="form-label" for="minPrice">From ₹</label>
+      <input class="form-control" id="minPrice" name="minPrice" type="number" min="0" value="<%= minPrice %>" placeholder="Min" />
+    </div>
+    <div class="col-lg-2 col-md-6">
+      <label class="form-label" for="maxPrice">To ₹</label>
+      <input class="form-control" id="maxPrice" name="maxPrice" type="number" min="0" value="<%= maxPrice %>" placeholder="Max" />
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <label class="form-label" for="sort">Order</label>
+      <select class="form-select" id="sort" name="sort">
+        <option value="newest" <%= sort === "newest" ? "selected" : "" %>>Recently added</option>
+        <option value="oldest" <%= sort === "oldest" ? "selected" : "" %>>Oldest first</option>
+        <option value="priceLow" <%= sort === "priceLow" ? "selected" : "" %>>Price: low to high</option>
+        <option value="priceHigh" <%= sort === "priceHigh" ? "selected" : "" %>>Price: high to low</option>
+      </select>
+    </div>
+    <div class="col-lg-2 d-flex align-items-end gap-2">
+      <button class="btn btn-dark w-100" type="submit"><i class="fa-solid fa-sliders me-1"></i> Refine</button>
+      <a class="btn btn-outline-dark" href="/listings" title="Reset filters"><i class="fa-solid fa-rotate-left"></i></a>
+    </div>
+  </form>
 
-  <div class="col-md-2">
-    <label class="form-label" for="minPrice">Min price</label>
-    <input class="form-control" id="minPrice" name="minPrice" type="number" min="0" value="<%= minPrice %>">
-  </div>
-
-  <div class="col-md-2">
-    <label class="form-label" for="maxPrice">Max price</label>
-    <input class="form-control" id="maxPrice" name="maxPrice" type="number" min="0" value="<%= maxPrice %>">
-  </div>
-
-  <div class="col-md-3">
-    <label class="form-label" for="sort">Sort by</label>
-    <select class="form-select" id="sort" name="sort">
-      <option value="newest" <%= sort === "newest" ? "selected" : "" %>>Newest</option>
-      <option value="oldest" <%= sort === "oldest" ? "selected" : "" %>>Oldest</option>
-      <option value="priceLow" <%= sort === "priceLow" ? "selected" : "" %>>Price: Low to High</option>
-      <option value="priceHigh" <%= sort === "priceHigh" ? "selected" : "" %>>Price: High to Low</option>
-    </select>
-  </div>
-
-  <div class="col-md-2 d-flex align-items-end gap-2">
-    <button class="btn btn-dark w-100" type="submit">Apply</button>
-    <a class="btn btn-outline-secondary" href="/listings">Reset</a>
-  </div>
-</form>
-
-<% if (search || country || minPrice || maxPrice) { %>
-  <p class="text-muted mt-3 mb-0">
-    Showing results for your current filters.
-    <strong><%= allListings.length %></strong> listing(s) on this page.
-  </p>
-<% } %>
-
-<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
-  <% for(let listing of allListings){ %>
-    <a href="/listings/<%= listing._id %>" class="listing-link">
-      <div class="card col listing-card">
-        <img
-          src="<%= listing.image?.url || '/images/default.jpg' %>"
-          class="card-img-top"
-          alt="<%= listing.title %>"
-          style="height: 20rem; object-fit: cover"
-        />
-        <div class="card-img-overlay"></div>
-        <div class="card-body">
-          <p class="card-text">
-            <b><%= listing.title %></b>
-            <br />
-            <%= listing.location %><% if (listing.country) { %>, <%= listing.country %><% } %>
-            <br />
-            &#8377;<%= listing.price.toLocaleString("en-IN") %>/Night
-            <i class="tax-info">&nbsp;&nbsp; +18% GST</i>
-          </p>
-        </div>
-      </div>
-    </a>
+  <% if (search || country || minPrice || maxPrice) { %>
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+      <p class="text-muted mb-0">Showing <strong><%= allListings.length %></strong> stay(s) matching your filters.</p>
+    </div>
   <% } %>
-</div>
 
-<% if (allListings.length === 0) { %>
-  <div class="text-center py-5">
-    <h4>No listings found</h4>
-    <p class="text-muted">Try changing your search or filters.</p>
-    <a class="btn btn-dark" href="/listings">View all listings</a>
+  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1 g-4 mt-1">
+    <% for(let listing of allListings){ %>
+      <a href="/listings/<%= listing._id %>" class="listing-link">
+        <article class="listing-card h-100">
+          <img src="<%= listing.image?.url || '/images/default.jpg' %>" class="card-img-top" alt="<%= listing.title %>" />
+          <div class="card-body">
+            <div class="d-flex justify-content-between gap-2">
+              <div>
+                <div class="card-title"><%= listing.title %></div>
+                <div class="card-location"><i class="fa-solid fa-location-dot me-1"></i><%= listing.location %><% if (listing.country) { %>, <%= listing.country %><% } %></div>
+              </div>
+              <span class="listing-badge">Stay</span>
+            </div>
+            <div class="card-price">₹<%= listing.price.toLocaleString("en-IN") %> <span class="text-muted fw-normal">/ night</span></div>
+          </div>
+        </article>
+      </a>
+    <% } %>
   </div>
-<% } %>
 
-<% if (totalPages > 1) { %>
-  <nav aria-label="Listing pagination">
-    <ul class="pagination justify-content-center">
-      <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-        <a class="page-link" href="/listings?page=<%= currentPage - 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Previous</a>
-      </li>
+  <% if (allListings.length === 0) { %>
+    <div class="empty-state text-center py-5 px-3 mt-4">
+      <div class="empty-icon"><i class="fa-regular fa-compass"></i></div>
+      <h4>Nothing matched this search</h4>
+      <p class="text-muted">Try a different destination or widen your price range.</p>
+      <a class="btn btn-dark" href="/listings">Explore every stay</a>
+    </div>
+  <% } %>
 
-      <% for(let page = 1; page <= totalPages; page++) { %>
-        <li class="page-item <%= page === currentPage ? 'active' : '' %>">
-          <a class="page-link" href="/listings?page=<%= page %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>"><%= page %></a>
-        </li>
-      <% } %>
+  <% if (totalPages > 1) { %>
+    <nav aria-label="Listing pagination" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>"><a class="page-link" href="/listings?page=<%= currentPage - 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Previous</a></li>
+        <% for(let page = 1; page <= totalPages; page++) { %>
+          <li class="page-item <%= page === currentPage ? 'active' : '' %>"><a class="page-link" href="/listings?page=<%= page %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>"><%= page %></a></li>
+        <% } %>
+        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>"><a class="page-link" href="/listings?page=<%= currentPage + 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Next</a></li>
+      </ul>
+    </nav>
+  <% } %>
 
-      <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-        <a class="page-link" href="/listings?page=<%= currentPage + 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Next</a>
-      </li>
-    </ul>
-  </nav>
-<% } %>
-
-<script>
-  const taxSwitch = document.getElementById("flexSwitchCheckDefault");
-  taxSwitch.addEventListener("click", () => {
-    const taxInfo = document.getElementsByClassName("tax-info");
-    for (const info of taxInfo) {
-      info.style.display = info.style.display !== "inline" ? "inline" : "none";
+  <script>
+    const themeSwitch = document.getElementById("themeSwitch");
+    if (themeSwitch) {
+      themeSwitch.checked = document.documentElement.getAttribute("data-theme") === "dark";
+      themeSwitch.addEventListener("change", () => {
+        const theme = themeSwitch.checked ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("roamly-theme", theme);
+        const navToggle = document.getElementById("themeToggle");
+        if (navToggle) navToggle.innerHTML = theme === "dark" ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      });
     }
-  });
-</script>
+  </script>
+</div>
