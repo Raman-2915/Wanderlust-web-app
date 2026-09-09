@@ -2,6 +2,7 @@ const Booking = require("../models/booking.js");
 const Listing = require("../models/listing.js");
 
 const getDate = (value) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value || "")) return null;
   const date = new Date(`${value}T00:00:00`);
   return Number.isNaN(date.getTime()) ? null : date;
 };
@@ -16,6 +17,11 @@ module.exports.createBooking = async (req, res) => {
     return res.redirect("/listings");
   }
 
+  if (listing.owner.equals(req.user._id)) {
+    req.flash("error", "You cannot book your own listing.");
+    return res.redirect(`/listings/${id}`);
+  }
+
   const start = getDate(checkIn);
   const end = getDate(checkOut);
   const guestCount = Number(guests);
@@ -25,7 +31,9 @@ module.exports.createBooking = async (req, res) => {
     return res.redirect(`/listings/${id}`);
   }
 
-  if (start < new Date(new Date().setHours(0, 0, 0, 0))) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (start < today) {
     req.flash("error", "Check-in date cannot be in the past.");
     return res.redirect(`/listings/${id}`);
   }
@@ -42,10 +50,9 @@ module.exports.createBooking = async (req, res) => {
     return res.redirect(`/listings/${id}`);
   }
 
-  const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+  const nights = Math.ceil((end - start) / 86400000);
   const totalPrice = nights * listing.price;
-
-  await Booking.create({
+  const booking = await Booking.create({
     listing: id,
     guest: req.user._id,
     checkIn: start,
@@ -54,8 +61,8 @@ module.exports.createBooking = async (req, res) => {
     totalPrice,
   });
 
-  req.flash("success", "Booking confirmed successfully!");
-  res.redirect("/profile");
+  await booking.populate("listing", "title location country price");
+  res.render("bookings/confirmation.ejs", { booking });
 };
 
 module.exports.cancelBooking = async (req, res) => {
