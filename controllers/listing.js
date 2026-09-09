@@ -1,4 +1,5 @@
 const Listing = require("../models/listing");
+const User = require("../models/user");
 
 module.exports.index = async (req, res) => {
   const {
@@ -144,7 +145,47 @@ module.exports.showListing = async (req, res) => {
     return res.redirect("/listings");
   }
 
-  res.render("listings/show.ejs", { listing });
+  let isFavorite = false;
+  if (req.user) {
+    isFavorite = await User.exists({
+      _id: req.user._id,
+      favorites: listing._id,
+    });
+  }
+
+  res.render("listings/show.ejs", { listing, isFavorite: Boolean(isFavorite) });
+};
+
+module.exports.addFavorite = async (req, res) => {
+  const listing = await Listing.findById(req.params.id);
+
+  if (!listing) {
+    req.flash("error", "Listing you requested for does not exist!");
+    return res.redirect("/listings");
+  }
+
+  await User.findByIdAndUpdate(req.user._id, {
+    $addToSet: { favorites: listing._id },
+  });
+
+  req.flash("success", "Added to your wishlist!");
+  res.redirect(`/listings/${listing._id}`);
+};
+
+module.exports.removeFavorite = async (req, res) => {
+  const listing = await Listing.findById(req.params.id);
+
+  if (!listing) {
+    req.flash("error", "Listing you requested for does not exist!");
+    return res.redirect("/listings");
+  }
+
+  await User.findByIdAndUpdate(req.user._id, {
+    $pull: { favorites: listing._id },
+  });
+
+  req.flash("success", "Removed from your wishlist!");
+  res.redirect(`/listings/${listing._id}`);
 };
 
 module.exports.destroyListing = async (req, res) => {
@@ -155,6 +196,11 @@ module.exports.destroyListing = async (req, res) => {
     req.flash("error", "Listing you requested for does not exist!");
     return res.redirect("/listings");
   }
+
+  await User.updateMany(
+    { favorites: deletedListing._id },
+    { $pull: { favorites: deletedListing._id } }
+  );
 
   req.flash("success", "Listing Deleted!");
   res.redirect("/listings");
