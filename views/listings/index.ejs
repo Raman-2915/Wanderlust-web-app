@@ -1,103 +1,127 @@
-<% layout("/layouts/boilerplate.ejs") -%> 
+<% layout("/layouts/boilerplate.ejs") -%>
 
 <style>
-  .filters{
+  .filters {
     display: flex;
     align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
   }
-  .filter{
+
+  .filter {
     text-align: center;
-    margin-right: 2rem;
-    margin-top: 2rem;
     opacity: 0.7;
   }
-  .filter:hover{
+
+  .filter:hover {
     opacity: 1;
     cursor: pointer;
   }
-  .filter p{
+
+  .filter p {
     font-size: 0.8rem;
+    margin-bottom: 0;
   }
-  .tax-info{
+
+  .tax-info {
     display: none;
   }
-  .tax-toggle{
-    border: 1px solid black;
+
+  .tax-toggle {
+    border: 1px solid #dee2e6;
     border-radius: 1rem;
-    height: 3.25rem;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
-    margin-right: 2rem;
+    margin-left: auto;
+  }
+
+  .listing-controls {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .pagination {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 </style>
-  <div class="filters">
-    <div class="filter">
-      <div><i class="fa-solid fa-fire"></i></div>
-      <p>Trending</p>
+
+<div class="filters">
+  <div class="filter"><div><i class="fa-solid fa-fire"></i></div><p>Trending</p></div>
+  <div class="filter"><div><i class="fa-solid fa-bed"></i></div><p>Rooms</p></div>
+  <div class="filter"><div><i class="fa-solid fa-mountain-city"></i></div><p>Iconic Cities</p></div>
+  <div class="filter"><div><i class="fa-solid fa-mountain"></i></div><p>Mountains</p></div>
+  <div class="filter"><div><i class="fa-solid fa-person-swimming"></i></div><p>Amazing Pools</p></div>
+  <div class="filter"><div><i class="fa-solid fa-campground"></i></div><p>Camping</p></div>
+
+  <div class="tax-toggle">
+    <div class="form-check form-switch mb-0">
+      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+      <label class="form-check-label" for="flexSwitchCheckDefault">Display tax</label>
     </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-bed"></i></div>
-      <p>Rooms</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-mountain-city"></i></div>
-      <p>Iconic Cities</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-mountain"></i></div>
-      <p>Mountains</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-chess-rook"></i></div>
-      <p>Castles</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-person-swimming"></i></div>
-      <p>Amazing Pools</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-campground"></i></div>
-      <p>Camping</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-tractor"></i></div>
-      <p>Farms</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-snowflake"></i></div>
-      <p>Arctic</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-igloo"></i></div>
-      <p>Domes</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-ship"></i></div>
-      <p>Boats</p>
-    </div>
-    <div class="tax-toggle ms-auto">
-      <div class="form-check-reverse form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-        <label class="form-check-label" for="flexSwitchCheckDefault">Display tax </label>
-      </div>
-    </div>
-    
   </div>
-  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
-    <% for(let listing of allListings){ %>
+</div>
+
+<form class="listing-controls row g-2" action="/listings" method="GET">
+  <div class="col-md-3">
+    <label class="form-label" for="country">Country</label>
+    <input class="form-control" id="country" name="country" value="<%= country %>" placeholder="e.g. India">
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label" for="minPrice">Min price</label>
+    <input class="form-control" id="minPrice" name="minPrice" type="number" min="0" value="<%= minPrice %>">
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label" for="maxPrice">Max price</label>
+    <input class="form-control" id="maxPrice" name="maxPrice" type="number" min="0" value="<%= maxPrice %>">
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label" for="sort">Sort by</label>
+    <select class="form-select" id="sort" name="sort">
+      <option value="newest" <%= sort === "newest" ? "selected" : "" %>>Newest</option>
+      <option value="oldest" <%= sort === "oldest" ? "selected" : "" %>>Oldest</option>
+      <option value="priceLow" <%= sort === "priceLow" ? "selected" : "" %>>Price: Low to High</option>
+      <option value="priceHigh" <%= sort === "priceHigh" ? "selected" : "" %>>Price: High to Low</option>
+    </select>
+  </div>
+
+  <div class="col-md-2 d-flex align-items-end gap-2">
+    <button class="btn btn-dark w-100" type="submit">Apply</button>
+    <a class="btn btn-outline-secondary" href="/listings">Reset</a>
+  </div>
+</form>
+
+<% if (search || country || minPrice || maxPrice) { %>
+  <p class="text-muted mt-3 mb-0">
+    Showing results for your current filters.
+    <strong><%= allListings.length %></strong> listing(s) on this page.
+  </p>
+<% } %>
+
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
+  <% for(let listing of allListings){ %>
     <a href="/listings/<%= listing._id %>" class="listing-link">
       <div class="card col listing-card">
         <img
-          src="<%= listing.image.url %>"
+          src="<%= listing.image?.url || '/images/default.jpg' %>"
           class="card-img-top"
-          alt="listing_image"
-          style="height: 20rem"
+          alt="<%= listing.title %>"
+          style="height: 20rem; object-fit: cover"
         />
         <div class="card-img-overlay"></div>
         <div class="card-body">
           <p class="card-text">
             <b><%= listing.title %></b>
+            <br />
+            <%= listing.location %><% if (listing.country) { %>, <%= listing.country %><% } %>
             <br />
             &#8377;<%= listing.price.toLocaleString("en-IN") %>/Night
             <i class="tax-info">&nbsp;&nbsp; +18% GST</i>
@@ -105,22 +129,43 @@
         </div>
       </div>
     </a>
-    <% } %>
-  </div>
-</body>
+  <% } %>
+</div>
 
+<% if (allListings.length === 0) { %>
+  <div class="text-center py-5">
+    <h4>No listings found</h4>
+    <p class="text-muted">Try changing your search or filters.</p>
+    <a class="btn btn-dark" href="/listings">View all listings</a>
+  </div>
+<% } %>
+
+<% if (totalPages > 1) { %>
+  <nav aria-label="Listing pagination">
+    <ul class="pagination justify-content-center">
+      <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+        <a class="page-link" href="/listings?page=<%= currentPage - 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Previous</a>
+      </li>
+
+      <% for(let page = 1; page <= totalPages; page++) { %>
+        <li class="page-item <%= page === currentPage ? 'active' : '' %>">
+          <a class="page-link" href="/listings?page=<%= page %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>"><%= page %></a>
+        </li>
+      <% } %>
+
+      <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+        <a class="page-link" href="/listings?page=<%= currentPage + 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Next</a>
+      </li>
+    </ul>
+  </nav>
+<% } %>
 
 <script>
-  let taxSwitch=document.getElementById("flexSwitchCheckDefault");
-  taxSwitch.addEventListener("click",()=>{
-    let taxInfo=document.getElementsByClassName("tax-info");
-    for(info of taxInfo){
-      if(info.style.display !="inline"){
-        info.style.display="inline";
-      } else{
-        info.style.display="none";
-      }
+  const taxSwitch = document.getElementById("flexSwitchCheckDefault");
+  taxSwitch.addEventListener("click", () => {
+    const taxInfo = document.getElementsByClassName("tax-info");
+    for (const info of taxInfo) {
+      info.style.display = info.style.display !== "inline" ? "inline" : "none";
     }
-     
   });
 </script>
