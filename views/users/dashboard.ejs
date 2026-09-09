@@ -1,98 +1,43 @@
 <% layout("/layouts/boilerplate.ejs") -%>
 
-<style>
-  .dashboard-header { background: linear-gradient(135deg, #f8f9fa, #fff); border: 1px solid #e9ecef; border-radius: 1rem; padding: 2rem; }
-  .stat-card { border: 1px solid #e9ecef; border-radius: 0.9rem; padding: 1rem 1.25rem; height: 100%; background: #fff; }
-  .stat-card .stat-number { font-size: 1.6rem; font-weight: 700; }
-  .dashboard-section { margin-top: 2.5rem; }
-  .dashboard-card { border: 1px solid #e9ecef; border-radius: 0.9rem; overflow: hidden; height: 100%; background: #fff; }
-  .dashboard-card img { width: 100%; height: 12rem; object-fit: cover; }
-  .dashboard-card-body { padding: 1rem; }
-  .review-item, .booking-item { border: 1px solid #e9ecef; border-radius: 0.75rem; padding: 1rem; background: #fff; }
-</style>
-
-<div class="container mt-4 mb-5">
-  <div class="dashboard-header">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-      <div>
-        <p class="text-muted mb-1">Your Wanderlust account</p>
-        <h2 class="mb-1">Welcome, <%= user.username %>!</h2>
-        <p class="text-muted mb-0"><%= user.email %></p>
-      </div>
-      <a href="/listings" class="btn btn-dark">Explore Listings</a>
+<div class="dashboard-page">
+  <section class="dashboard-header">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+      <div><span class="eyebrow">Your Roamly space</span><h1 class="mt-2 mb-2">Welcome back, <%= user.username %>.</h1><p class="text-muted mb-0"><%= user.email %></p></div>
+      <a href="/listings" class="btn btn-dark px-4"><i class="fa-solid fa-compass me-2"></i>Discover stays</a>
     </div>
+  </section>
+
+  <div class="row g-3 mt-3">
+    <div class="col-sm-6 col-lg-3"><div class="stat-card"><div class="stat-label">Stays hosted</div><div class="stat-number"><%= listings.length %></div></div></div>
+    <div class="col-sm-6 col-lg-3"><div class="stat-card"><div class="stat-label">Saved places</div><div class="stat-number"><%= favorites.length %></div></div></div>
+    <div class="col-sm-6 col-lg-3"><div class="stat-card"><div class="stat-label">Reviews shared</div><div class="stat-number"><%= reviews.length %></div></div></div>
+    <div class="col-sm-6 col-lg-3"><div class="stat-card"><div class="stat-label">Trips booked</div><div class="stat-number"><%= bookings.length %></div></div></div>
   </div>
 
-  <div class="row g-3 mt-2">
-    <div class="col-md-3"><div class="stat-card"><div class="text-muted">My Listings</div><div class="stat-number"><%= listings.length %></div></div></div>
-    <div class="col-md-3"><div class="stat-card"><div class="text-muted">Wishlist</div><div class="stat-number"><%= favorites.length %></div></div></div>
-    <div class="col-md-3"><div class="stat-card"><div class="text-muted">Reviews Written</div><div class="stat-number"><%= reviews.length %></div></div></div>
-    <div class="col-md-3"><div class="stat-card"><div class="text-muted">My Bookings</div><div class="stat-number"><%= bookings.length %></div></div></div>
-  </div>
-
-  <section class="dashboard-section">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div><h3 class="mb-1">My Listings</h3><p class="text-muted mb-0">Properties you have added to Wanderlust.</p></div>
-      <a href="/listings/new" class="btn btn-outline-dark">+ Add Listing</a>
-    </div>
-    <% if (listings.length === 0) { %>
-      <div class="text-center border rounded-3 p-5"><h5>No listings yet</h5><p class="text-muted">Create your first property listing to get started.</p><a href="/listings/new" class="btn btn-dark">Create Listing</a></div>
-    <% } else { %>
-      <div class="row g-4">
-        <% listings.forEach(listing => { %>
-          <div class="col-md-6 col-lg-4"><div class="dashboard-card"><img src="<%= listing.image?.url || '/images/default.jpg' %>" alt="<%= listing.title %>"><div class="dashboard-card-body"><h5><%= listing.title %></h5><p class="text-muted mb-2"><%= listing.location %><% if (listing.country) { %>, <%= listing.country %><% } %></p><p class="mb-3">&#8377;<%= listing.price.toLocaleString("en-IN") %>/Night</p><div class="d-flex gap-2"><a href="/listings/<%= listing._id %>" class="btn btn-sm btn-dark">View</a><a href="/listings/<%= listing._id %>/edit" class="btn btn-sm btn-outline-dark">Edit</a></div></div></div></div>
-        <% }) %>
-      </div>
+  <section class="dashboard-section" id="hosted-stays">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3"><div><span class="eyebrow">Hosting</span><h2 class="mt-1 mb-1">Your stays</h2><p class="text-muted mb-0">Places you have shared with the Roamly community.</p></div><a href="/listings/new" class="btn btn-dark"><i class="fa-solid fa-plus me-2"></i>Publish a stay</a></div>
+    <% if (listings.length === 0) { %><div class="empty-state text-center p-5"><div class="empty-icon"><i class="fa-solid fa-house"></i></div><h5>Your hosting journey starts here</h5><p class="text-muted">Publish your first stay and make it discoverable.</p><a href="/listings/new" class="btn btn-dark">Create your first stay</a></div><% } else { %>
+      <div class="row g-4"><% listings.forEach(listing => { %><div class="col-md-6 col-lg-4"><div class="dashboard-card"><img src="<%= listing.image?.url || '/images/default.jpg' %>" alt="<%= listing.title %>"><div class="dashboard-card-body"><h5><%= listing.title %></h5><p class="text-muted mb-2"><i class="fa-solid fa-location-dot me-1"></i><%= listing.location %><% if (listing.country) { %>, <%= listing.country %><% } %></p><p class="mb-3 fw-bold">₹<%= listing.price.toLocaleString("en-IN") %> <span class="text-muted fw-normal">/ night</span></p><div class="d-flex gap-2"><a href="/listings/<%= listing._id %>" class="btn btn-sm btn-dark">Open stay</a><a href="/listings/<%= listing._id %>/edit" class="btn btn-sm btn-outline-dark">Edit</a></div></div></div></div><% }) %></div>
     <% } %>
   </section>
 
-  <section class="dashboard-section">
-    <div class="mb-3"><h3 class="mb-1">My Wishlist</h3><p class="text-muted mb-0">Saved stays you want to come back to.</p></div>
-    <% if (favorites.length === 0) { %>
-      <div class="text-center border rounded-3 p-5"><h5>Your wishlist is empty</h5><p class="text-muted">Save listings you like and they will appear here.</p><a href="/listings" class="btn btn-dark">Discover Places</a></div>
-    <% } else { %>
-      <div class="row g-4">
-        <% favorites.forEach(listing => { %>
-          <div class="col-md-6 col-lg-4"><div class="dashboard-card"><img src="<%= listing.image?.url || '/images/default.jpg' %>" alt="<%= listing.title %>"><div class="dashboard-card-body"><h5><%= listing.title %></h5><p class="text-muted mb-2"><%= listing.location %><% if (listing.country) { %>, <%= listing.country %><% } %></p><p class="mb-3">&#8377;<%= listing.price.toLocaleString("en-IN") %>/Night</p><div class="d-flex gap-2"><a href="/listings/<%= listing._id %>" class="btn btn-sm btn-dark">View</a><form method="POST" action="/listings/<%= listing._id %>/favorite?_method=DELETE"><button type="submit" class="btn btn-sm btn-outline-danger">Remove</button></form></div></div></div></div>
-        <% }) %>
-      </div>
+  <section class="dashboard-section" id="saved-places">
+    <div class="mb-3"><span class="eyebrow">Your collection</span><h2 class="mt-1 mb-1">Saved places</h2><p class="text-muted mb-0">Stays you want to remember.</p></div>
+    <% if (favorites.length === 0) { %><div class="empty-state text-center p-5"><div class="empty-icon"><i class="fa-regular fa-heart"></i></div><h5>Your collection is empty</h5><p class="text-muted">Save a stay while exploring and it will appear here.</p><a href="/listings" class="btn btn-dark">Explore places</a></div><% } else { %>
+      <div class="row g-4"><% favorites.forEach(listing => { %><div class="col-md-6 col-lg-4"><div class="dashboard-card"><img src="<%= listing.image?.url || '/images/default.jpg' %>" alt="<%= listing.title %>"><div class="dashboard-card-body"><h5><%= listing.title %></h5><p class="text-muted mb-2"><%= listing.location %><% if (listing.country) { %>, <%= listing.country %><% } %></p><p class="mb-3 fw-bold">₹<%= listing.price.toLocaleString("en-IN") %> <span class="text-muted fw-normal">/ night</span></p><div class="d-flex gap-2"><a href="/listings/<%= listing._id %>" class="btn btn-sm btn-dark">Open stay</a><form method="POST" action="/listings/<%= listing._id %>/favorite?_method=DELETE"><button type="submit" class="btn btn-sm btn-outline-dark">Remove</button></form></div></div></div></div><% }) %></div>
     <% } %>
   </section>
 
-  <section class="dashboard-section">
-    <div class="mb-3"><h3 class="mb-1">My Bookings</h3><p class="text-muted mb-0">Your upcoming and previous stays.</p></div>
-    <% if (bookings.length === 0) { %>
-      <div class="text-center border rounded-3 p-4"><p class="text-muted mb-0">You have no bookings yet.</p></div>
-    <% } else { %>
-      <div class="d-grid gap-3">
-        <% bookings.forEach(booking => { %>
-          <div class="booking-item">
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
-              <div>
-                <h5 class="mb-1"><%= booking.listing?.title || 'Listing' %></h5>
-                <div class="text-muted small"><%= booking.listing?.location || '' %><% if (booking.listing?.country) { %>, <%= booking.listing.country %><% } %></div>
-                <div class="mt-2"><strong>Check-in:</strong> <%= booking.checkIn.toLocaleDateString("en-IN") %> &nbsp; <strong>Check-out:</strong> <%= booking.checkOut.toLocaleDateString("en-IN") %></div>
-                <div class="mt-1">Guests: <%= booking.guests %> &nbsp; · &nbsp; Total: &#8377;<%= booking.totalPrice.toLocaleString("en-IN") %></div>
-              </div>
-              <div class="text-md-end">
-                <span class="badge <%= booking.status === 'confirmed' ? 'text-bg-success' : 'text-bg-secondary' %>"><%= booking.status %></span>
-                <% if (booking.status === 'confirmed') { %>
-                  <form class="mt-2" method="POST" action="/listings/bookings/<%= booking._id %>?_method=DELETE"><button class="btn btn-sm btn-outline-danger">Cancel</button></form>
-                <% } %>
-              </div>
-            </div>
-          </div>
-        <% }) %>
-      </div>
+  <section class="dashboard-section" id="trips">
+    <div class="mb-3"><span class="eyebrow">Travel plans</span><h2 class="mt-1 mb-1">Your trips</h2><p class="text-muted mb-0">Upcoming and previous reservations in one place.</p></div>
+    <% if (bookings.length === 0) { %><div class="empty-state text-center p-5"><div class="empty-icon"><i class="fa-regular fa-calendar"></i></div><h5>No trips planned yet</h5><p class="text-muted">Find somewhere interesting and make your next plan.</p><a href="/listings" class="btn btn-dark">Start exploring</a></div><% } else { %>
+      <div class="d-grid gap-3"><% bookings.forEach(booking => { %><div class="booking-item"><div class="d-flex flex-column flex-md-row justify-content-between gap-3"><div><span class="eyebrow">Reservation</span><h5 class="mt-1 mb-1"><%= booking.listing?.title || 'Stay' %></h5><div class="text-muted small"><%= booking.listing?.location || '' %><% if (booking.listing?.country) { %>, <%= booking.listing.country %><% } %></div><div class="mt-3"><strong>Check-in</strong> <%= booking.checkIn.toLocaleDateString("en-IN") %> <span class="mx-2 text-muted">→</span> <strong>Check-out</strong> <%= booking.checkOut.toLocaleDateString("en-IN") %></div><div class="mt-1 text-muted">Guests: <%= booking.guests %> · Total: ₹<%= booking.totalPrice.toLocaleString("en-IN") %></div></div><div class="text-md-end"><span class="badge <%= booking.status === 'confirmed' ? 'text-bg-success' : 'text-bg-secondary' %>"><%= booking.status %></span><% if (booking.status === 'confirmed') { %><form class="mt-2" method="POST" action="/listings/bookings/<%= booking._id %>?_method=DELETE"><button class="btn btn-sm btn-outline-dark" type="submit">Cancel trip</button></form><% } %></div></div></div><% }) %></div>
     <% } %>
   </section>
 
-  <section class="dashboard-section">
-    <div class="mb-3"><h3 class="mb-1">My Reviews</h3><p class="text-muted mb-0">Your recent reviews across Wanderlust listings.</p></div>
-    <% if (reviews.length === 0) { %>
-      <div class="text-center border rounded-3 p-4"><p class="text-muted mb-0">You have not written any reviews yet.</p></div>
-    <% } else { %>
-      <div class="d-grid gap-3"><% reviews.forEach(review => { %><div class="review-item"><div class="d-flex justify-content-between gap-3"><div><strong><%= review.listing?.title || 'Listing' %></strong><div class="text-muted small"><%= review.comment %></div></div><span class="badge text-bg-dark align-self-start"><%= review.rating %>/5</span></div></div><% }) %></div>
-    <% } %>
+  <section class="dashboard-section" id="reviews">
+    <div class="mb-3"><span class="eyebrow">Community</span><h2 class="mt-1 mb-1">Your reviews</h2><p class="text-muted mb-0">Notes you have left for fellow travellers.</p></div>
+    <% if (reviews.length === 0) { %><div class="empty-state text-center p-4"><p class="text-muted mb-0">You have not shared a review yet.</p></div><% } else { %><div class="d-grid gap-3"><% reviews.forEach(review => { %><div class="review-item"><div class="d-flex justify-content-between gap-3"><div><strong><%= review.listing?.title || 'Stay' %></strong><div class="text-muted small mt-1"><%= review.comment %></div></div><span class="badge text-bg-dark align-self-start"><%= review.rating %>/5</span></div></div><% }) %></div><% } %>
   </section>
 </div>
