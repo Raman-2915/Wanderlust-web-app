@@ -16,6 +16,12 @@
           <div class="detail-price">₹<%= listing.price.toLocaleString("en-IN") %><span class="text-muted fw-normal fs-6"> / night</span></div>
         </div>
         <p class="mt-3 mb-0"><%= listing.description %></p>
+        <div class="d-flex flex-wrap gap-3 mt-3 text-muted">
+          <span><i class="fa-solid fa-user-group me-1"></i>Up to <%= listing.maxGuests || 1 %> guests</span>
+          <span><i class="fa-solid fa-bed me-1"></i><%= listing.beds || 0 %> beds</span>
+          <span><i class="fa-solid fa-door-open me-1"></i><%= listing.bedrooms || 0 %> bedrooms</span>
+          <span><i class="fa-solid fa-bath me-1"></i><%= listing.bathrooms || 0 %> baths</span>
+        </div>
         <% if (currUser) { %>
           <div class="mt-4">
             <% if (isFavorite) { %>
@@ -42,7 +48,7 @@
             <div class="row g-3 mt-1">
               <div class="col-md-6"><label class="form-label" for="checkIn">Check-in</label><input class="form-control" type="date" id="checkIn" name="booking[checkIn]" required /></div>
               <div class="col-md-6"><label class="form-label" for="checkOut">Check-out</label><input class="form-control" type="date" id="checkOut" name="booking[checkOut]" required /></div>
-              <div class="col-12"><label class="form-label" for="guests">Guests</label><input class="form-control" type="number" id="guests" name="booking[guests]" min="1" value="1" required /></div>
+              <div class="col-12"><label class="form-label" for="guests">Guests</label><input class="form-control" type="number" id="guests" name="booking[guests]" min="1" max="<%= listing.maxGuests || 1 %>" value="1" required /></div>
             </div>
             <div class="booking-total mt-3 d-flex justify-content-between"><strong>Estimated total</strong><strong id="booking-total">₹0</strong></div>
             <button class="btn btn-dark mt-3 w-100" type="submit"><i class="fa-solid fa-calendar-check me-2"></i>Reserve stay</button>
