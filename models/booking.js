@@ -22,6 +22,15 @@ const bookingSchema = new Schema(
       enum: ["confirmed", "cancelled"],
       default: "confirmed",
     },
+    paymentStatus: {
+      type: String,
+      enum: ["unpaid", "demo_paid"],
+      default: "unpaid",
+    },
+    paymentReference: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );
