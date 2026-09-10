@@ -150,3 +150,10 @@ footer { margin-top:4rem; }
 .auth-field .invalid-feedback { font-size:.72rem; }
 @media (max-width:991px) { .nav-search{width:100%;margin:.75rem 0}.nav-actions{align-items:flex-start;flex-direction:column}.tax-toggle{margin-left:0}.auth-shell{max-width:720px;grid-template-columns:1fr}.auth-visual{min-height:300px;padding:2.5rem}.auth-visual h1{font-size:clamp(2.2rem,7vw,3.4rem);margin:1.5rem 0 .8rem}.auth-visual-note{margin-top:2.5rem}.auth-card{padding:2.5rem clamp(1.5rem,7vw,4rem)} }
 @media (max-width:575px) { .navbar{padding:.7rem .8rem !important}.listing-page,.detail-page,.dashboard-page,.form-page{padding-top:1.25rem}.listing-card .card-img-top{height:240px}.form-shell{padding:1.25rem;border-radius:18px}.auth-page{padding:1rem .75rem}.auth-shell{border-radius:22px;min-height:auto}.auth-visual{min-height:270px;padding:1.75rem}.auth-visual h1{font-size:2.15rem}.auth-visual p{font-size:.86rem;line-height:1.6}.auth-card{padding:2rem 1.35rem}.auth-card h2{font-size:1.75rem}.auth-field input{min-height:50px} }
+
+
+.demo-payment-card { border:1px solid var(--border); border-radius:16px; padding:1.25rem; background:linear-gradient(135deg,var(--accent-soft),var(--surface)); }
+.demo-payment-card h3 { font-weight:800; letter-spacing:-.03em; }
+.demo-payment-status { border:1px solid var(--accent); border-radius:14px; padding:.9rem 1rem; background:var(--accent-soft); color:var(--accent-dark); font-weight:700; }
+.filter.active { background:var(--accent-soft); border-color:var(--accent); color:var(--accent-dark); }
+@media (max-width:575px) { .booking-card { position:static; } .demo-payment-card { padding:1rem; } }
