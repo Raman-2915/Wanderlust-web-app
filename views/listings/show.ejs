@@ -1,4 +1,5 @@
 <% layout("/layouts/boilerplate.ejs") -%>
+<% if (structuredData) { %><script type="application/ld+json"><%- structuredData %></script><% } %>
 
 <div class="detail-page">
   <div class="mb-4">
