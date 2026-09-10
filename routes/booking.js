@@ -10,6 +10,12 @@ router.post(
   wrapAsync(bookingController.createBooking)
 );
 
+router.post(
+  "/bookings/:bookingId/payment",
+  isLoggedIn,
+  wrapAsync(bookingController.completeDemoPayment)
+);
+
 router.delete(
   "/bookings/:bookingId",
   isLoggedIn,
