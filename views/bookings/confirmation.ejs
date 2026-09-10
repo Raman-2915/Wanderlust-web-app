@@ -18,6 +18,19 @@
       </div>
     </div>
 
+    <% if (booking.paymentStatus === "demo_paid") { %>
+      <div class="demo-payment-status mt-4"><i class="fa-solid fa-circle-check me-2"></i>Demo payment complete · Ref <%= booking.paymentReference %> · No money was charged.</div>
+    <% } else { %>
+      <div class="demo-payment-card mt-4 text-start">
+        <span class="eyebrow">Demo checkout</span>
+        <h3 class="mt-2">Ready to complete your reservation?</h3>
+        <p class="text-muted mb-3">This is a simulated payment only. It does not collect card details or charge money.</p>
+        <form method="POST" action="/listings/bookings/<%= booking._id %>/payment">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <button class="btn btn-dark w-100" type="submit"><i class="fa-solid fa-lock me-2"></i>Pay ₹<%= booking.totalPrice.toLocaleString("en-IN") %> in demo mode</button>
+        </form>
+      </div>
+    <% } %>
     <div class="d-flex flex-wrap justify-content-center gap-2 mt-4"><a href="/profile#trips" class="btn btn-dark">View my trips</a><a href="/listings" class="btn btn-outline-dark">Find another stay</a></div>
   </div>
 </div>
