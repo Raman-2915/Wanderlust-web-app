@@ -5,6 +5,7 @@ const { isLoggedIn, validateListing, isOwner } = require("../middleware.js");
 const listingController = require("../controllers/listing.js");
 const multer = require("multer");
 const { storage } = require("../cloudConfig.js");
+const csrf = require("../middleware/csrf.js");
 
 const upload = multer({
   storage,
@@ -26,6 +27,7 @@ router
   .post(
     isLoggedIn,
     upload.single("listing[image]"),
+    csrf.protect,
     validateListing,
     wrapAsync(listingController.createListing)
   );
@@ -36,6 +38,7 @@ router
     isLoggedIn,
     isOwner,
     upload.single("listing[image]"),
+    csrf.protect,
     validateListing,
     wrapAsync(listingController.editListing)
   )
