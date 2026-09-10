@@ -6,6 +6,7 @@
     <h1 class="mt-2">Polish your place.</h1>
     <p class="form-help">Keep your stay details fresh so guests know exactly what to expect.</p>
     <form method="post" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <div class="mb-4"><label for="title" class="form-label">Stay name</label><input type="text" name="listing[title]" id="title" value="<%= listing.title %>" class="form-control" required /><div class="invalid-feedback">Enter a stay name.</div></div>
       <div class="mb-4"><label for="description" class="form-label">About the stay</label><textarea name="listing[description]" id="description" class="form-control" rows="5" required><%= listing.description %></textarea><div class="invalid-feedback">Enter a description.</div></div>
       <div class="mb-4 upload-box preview-image"><label class="form-label">Current cover photo</label><div><img src="<%= listing.image?.url || '/images/default.jpg' %>" alt="Current cover" /></div></div>
