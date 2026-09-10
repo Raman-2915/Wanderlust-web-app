@@ -1,0 +1,23 @@
+<% layout("/layouts/boilerplate.ejs") -%>
+
+<div class="confirmation">
+  <div class="detail-panel text-center">
+    <div class="confirmation-icon"><i class="fa-solid fa-check"></i></div>
+    <span class="eyebrow d-block mt-4">Reservation complete</span>
+    <h1 class="detail-title mt-2">Your trip is confirmed.</h1>
+    <p class="text-muted">Pack your bags. Your stay has been reserved successfully.</p>
+
+    <div class="text-start detail-panel mt-4" style="box-shadow:none;">
+      <div class="d-flex justify-content-between gap-3"><div><span class="eyebrow">Stay</span><h4 class="mt-1 mb-1"><%= booking.listing.title %></h4><p class="text-muted mb-0"><%= booking.listing.location %><% if (booking.listing.country) { %>, <%= booking.listing.country %><% } %></p></div><strong class="detail-price">₹<%= booking.totalPrice.toLocaleString("en-IN") %></strong></div>
+      <hr />
+      <div class="row g-3">
+        <div class="col-md-6"><span class="text-muted small">CHECK-IN</span><div class="fw-bold"><%= booking.checkIn.toLocaleDateString("en-IN") %></div></div>
+        <div class="col-md-6"><span class="text-muted small">CHECK-OUT</span><div class="fw-bold"><%= booking.checkOut.toLocaleDateString("en-IN") %></div></div>
+        <div class="col-md-6"><span class="text-muted small">TRAVELLERS</span><div class="fw-bold"><%= booking.guests %></div></div>
+        <div class="col-md-6"><span class="text-muted small">TOTAL</span><div class="fw-bold">₹<%= booking.totalPrice.toLocaleString("en-IN") %></div></div>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-center gap-2 mt-4"><a href="/profile#trips" class="btn btn-dark">View my trips</a><a href="/listings" class="btn btn-outline-dark">Find another stay</a></div>
+  </div>
+</div>

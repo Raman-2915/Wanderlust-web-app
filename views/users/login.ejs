@@ -1,31 +1,42 @@
 <% layout("/layouts/boilerplate.ejs") -%>
-<body>
-  <div class="row mt-3">
-    <h1 class="col-6 offset-3">Login on Wanderlust</h1>
-    <div class="col-6 offset-3">
-      <form action="/login" method="post" class="needs-validation" novalidate>
-        <div class="mb-3">
-          <label for="username" class="form-label">Username</label>
-          <input
-            type="text"
-            name="username"
-            class="form-control"
-            id="username"
-            required
-          />
+
+<div class="auth-page">
+  <div class="auth-shell">
+    <section class="auth-visual">
+      <div class="auth-visual-content">
+        <span class="auth-eyebrow">ROAMLY</span>
+        <h1>Come back to places that feel like you.</h1>
+        <p>Pick up where you left off and keep planning your next escape.</p>
+      </div>
+      <div class="auth-visual-note">Stay curious. Travel differently.</div>
+    </section>
+
+    <section class="auth-card">
+      <div class="auth-card-header">
+        <span class="auth-kicker">Welcome back</span>
+        <h2>Log in to Roamly</h2>
+        <p>Access your saved stays, trips and hosted spaces.</p>
+      </div>
+
+      <form action="/login" method="post" class="needs-validation auth-form" novalidate>
+        <div class="auth-field">
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username" placeholder="Enter your username" autocomplete="username" required />
+          <div class="invalid-feedback">Please enter your username.</div>
         </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input
-            type="password"
-            name="password"
-            class="form-control"
-            id="password"
-            required
-          />
+
+        <div class="auth-field">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" placeholder="Enter your password" autocomplete="current-password" required />
+          <div class="invalid-feedback">Please enter your password.</div>
         </div>
-        <button class="btn btn-success btn-register">Login</button>
+
+        <button class="auth-submit" type="submit">Continue to Roamly <i class="fa-solid fa-arrow-right"></i></button>
       </form>
-    </div>
+
+      <div class="auth-switch">
+        New to Roamly? <a href="/signup">Create an account</a>
+      </div>
+    </section>
   </div>
-</body>
+</div>

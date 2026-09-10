@@ -1,103 +1,17 @@
 <% layout("/layouts/boilerplate.ejs") -%>
-<body>
-  <div class="row mt-3">
-    <div class="col-8 offset-2">
-      <br /><br />
-      <h3>Create New Listing</h3>
 
-      <form
-        method="post"
-        action="/listings"
-        novalidate
-        class="needs-validation"
-        enctype="multipart/form-data"
-      >
-        <div class="mb-3">
-          <label for="title" class="form-label">Title</label>
-          <input
-            type="text"
-            name="listing[title]"
-            placeholder="Add a Catchy Title"
-            class="form-control"
-            required
-          />
-          <div class="valid-feedback">Title Looks Good!</div>
-        </div>
-
-        <div class="mb-3">
-          <label for="description " class="form-label"> Description</label>
-          <textarea
-            type="text"
-            name="listing[description]"
-            class="form-control"
-            required
-          ></textarea>
-          <div class="invalid-feedback">Enter a short description!</div>
-        </div>
-
-        <!-- <div class="mb-3">
-          <label for="image" class="form-label">Image Link</label>
-          <input
-            type="text"
-            name="listing[image]"
-            placeholder="Enter image url/link"
-            class="form-control"
-          />
-          <div class="invalid-feedback">Enter a valid Link</div>
-        </div> -->
-        <div class="mb-3">
-          <label for="image" class="form-label">Upload Image </label>
-          <input
-            type="file"
-            name="listing[image]"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Image format is invalid</div>
-        </div>
-
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label for="price" class="form-label"> Price</label>
-            <input
-              type="number"
-              name="listing[price]"
-              placeholder="1200"
-              class="form-control"
-              required
-            />
-            <div class="invalid-feedback">Enter valid Price</div>
-          </div>
-
-          <div class="mb-3 col-md-8">
-            <label for="country" class="form-label"> Country</label>
-            <input
-              type="text"
-              name="listing[country]"
-              placeholder="India"
-              class="form-control"
-              required
-            />
-            <div class="invalid-feedback">Enter valid country</div>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label for="location" class="form-label"> Location</label>
-          <input
-            type="text"
-            name="listing[location]"
-            placeholder="New Delhi"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Enter Valid Location</div>
-        </div>
-
-        <br /><br />
-        <button class="btn btn-dark add-btn mt-3">Add</button>
-        <br /><br />
-      </form>
-    </div>
+<div class="form-page">
+  <div class="form-shell">
+    <span class="eyebrow">Host on Roamly</span>
+    <h1 class="mt-2">Share a place people will love.</h1>
+    <p class="form-help">Add the details guests need to discover your stay. You can update everything later.</p>
+    <form method="post" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+      <div class="mb-4"><label for="title" class="form-label">Stay name</label><input type="text" name="listing[title]" id="title" placeholder="e.g. Sunlit apartment near the city" class="form-control" required /><div class="valid-feedback">Looks good.</div></div>
+      <div class="mb-4"><label for="description" class="form-label">About the stay</label><textarea name="listing[description]" id="description" class="form-control" rows="5" placeholder="Tell guests what makes this place special..." required></textarea><div class="invalid-feedback">Add a short description.</div></div>
+      <div class="mb-4 upload-box"><label for="image" class="form-label">Cover photo</label><input type="file" name="listing[image]" id="image" class="form-control" accept="image/png,image/jpeg" required /><div class="form-text text-muted">JPG or PNG · maximum 5MB</div><div class="invalid-feedback">Please choose an image.</div></div>
+      <div class="row g-3"><div class="mb-3 col-md-5"><label for="price" class="form-label">Price per night</label><input type="number" name="listing[price]" id="price" min="0" placeholder="1200" class="form-control" required /><div class="invalid-feedback">Enter a valid price.</div></div><div class="mb-3 col-md-7"><label for="country" class="form-label">Country</label><input type="text" name="listing[country]" id="country" placeholder="India" class="form-control" required /><div class="invalid-feedback">Enter a country.</div></div></div>
+      <div class="mb-4"><label for="location" class="form-label">Location</label><input type="text" name="listing[location]" id="location" placeholder="New Delhi" class="form-control" required /><div class="invalid-feedback">Enter a location.</div></div>
+      <div class="d-flex flex-wrap gap-2 pt-2"><button class="btn btn-dark px-4" type="submit"><i class="fa-solid fa-plus me-2"></i>Publish stay</button><a class="btn btn-outline-dark px-4" href="/listings">Cancel</a></div>
+    </form>
   </div>
-</body>
+</div>

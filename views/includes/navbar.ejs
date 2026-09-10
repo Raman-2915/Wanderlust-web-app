@@ -1,65 +1,35 @@
-<style>
-  .search-btn {
-    background-color: #fe424d;
-    color: #fff;
-    border-radius: 25px;
-    padding: 0 1rem 0 1rem;
-  }
-  .search-btn:hover {
-    background-color: #fe424d;
-    color: #fff;
-  }
-  .search-btn i {
-    display: inline;
-    margin-right: 0.5rem;
-  }
-  .search-inp {
-    border-radius: 25px;
-    padding: 0.5rem 3rem 0.5rem 3rem;
-  }
-</style>
-
-<nav class="navbar navbar-expand-lg bg-body-light border-bottom sticky-top">
+<nav class="navbar navbar-expand-lg sticky-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/listings"
-      ><i class="fa-solid fa-compass"></i
-    ></a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNavAltMarkup"
-      aria-controls="navbarNavAltMarkup"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
+    <a class="navbar-brand" href="/listings" aria-label="Roamly home">
+      <span class="brand-mark"><i class="fa-solid fa-compass"></i></span>
+      <span class="brand-copy">Roamly<small>Stay curious</small></span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fa-solid fa-bars"></i>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-link" href="/listings">Explore</a>
+      <div class="navbar-nav ms-lg-3">
+        <a class="nav-link" href="/listings"><i class="fa-regular fa-compass me-1"></i> Discover</a>
       </div>
 
-      <div class="navbar-nav ms-auto">
-        <form class="d-flex" role="search">
-          <input
-            class="form-control me-2 search-inp"
-            type="search"
-            placeholder="Search Destinations"
-          />
-          <button class="btn search-btn" type="submit">
-            <i class="fa-solid fa-magnifying-glass"></i>Search
-          </button>
-        </form>
-      </div>
+      <form class="nav-search mx-lg-auto" action="/listings" method="GET" role="search">
+        <input class="form-control search-inp" name="search" value="<%= typeof search !== 'undefined' ? search : '' %>" type="search" placeholder="Where are you going?" aria-label="Search stays" />
+        <button class="btn search-btn" type="submit"><i class="fa-solid fa-arrow-right"></i></button>
+      </form>
 
-      <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="/listings/new">Add New Listing</a>
-        <% if(!currUser) { %>
-        <a class="nav-link" href="/signup"><b>SignUp</b></a>
-        <a class="nav-link" href="/login"><b>Login</b></a>
-        <% } %> <% if(currUser) { %>
-        <a class="nav-link" href="/logout"><b>Logout</b></a>
+      <div class="nav-actions ms-lg-auto">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch theme" title="Switch theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <% if (currUser) { %>
+          <a class="nav-link" href="/listings/new"><i class="fa-solid fa-plus me-1"></i> Host a stay</a>
+          <a class="nav-link" href="/profile"><i class="fa-regular fa-user me-1"></i> <%= currUser.username %></a>
+          <a class="nav-link" href="/logout">Sign out</a>
+        <% } else { %>
+          <a class="nav-link" href="/login">Log in</a>
+          <a class="btn btn-dark ms-1" href="/signup">Join Roamly</a>
         <% } %>
       </div>
     </div>

@@ -1,14 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
-const Listing = require("../models/listing.js");
 const { isLoggedIn, validateListing, isOwner } = require("../middleware.js");
 const listingController = require("../controllers/listing.js");
 const multer = require("multer");
 const { storage } = require("../cloudConfig.js");
-const upload = multer({ storage });
 
-//create new route
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(new Error("Only JPG and PNG images are allowed"));
+    }
+    cb(null, true);
+  },
+});
+
 router.get("/new", isLoggedIn, listingController.renderNewForm);
 
 router
@@ -32,7 +41,18 @@ router
   )
   .get(wrapAsync(listingController.showListing));
 
-//edit route
+router.post(
+  "/:id/favorite",
+  isLoggedIn,
+  wrapAsync(listingController.addFavorite)
+);
+
+router.delete(
+  "/:id/favorite",
+  isLoggedIn,
+  wrapAsync(listingController.removeFavorite)
+);
+
 router.get(
   "/:id/edit",
   isLoggedIn,
