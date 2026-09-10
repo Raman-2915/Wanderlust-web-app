@@ -160,7 +160,30 @@ module.exports.showListing = async (req, res) => {
     });
   }
 
-  res.render("listings/show.ejs", { listing, isFavorite: Boolean(isFavorite) });
+  const pageTitle = `${listing.title} in ${listing.location} | Roamly`;
+  const pageDescription = (listing.description || "Discover this stay on Roamly.").slice(0, 160);
+  const structuredData = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    name: listing.title,
+    description: pageDescription,
+    image: listing.image?.url,
+    priceRange: `₹${listing.price} per night`,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: listing.location,
+      addressCountry: listing.country,
+    },
+    url: `${req.protocol}://${req.get("host")}${req.originalUrl}`,
+  }).replace(/</g, "\\u003c");
+
+  res.render("listings/show.ejs", {
+    listing,
+    isFavorite: Boolean(isFavorite),
+    pageTitle,
+    pageDescription,
+    structuredData,
+  });
 };
 
 module.exports.addFavorite = async (req, res) => {

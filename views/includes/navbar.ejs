@@ -16,7 +16,7 @@
 
       <form class="nav-search mx-lg-auto" action="/listings" method="GET" role="search">
         <input class="form-control search-inp" name="search" value="<%= typeof search !== 'undefined' ? search : '' %>" type="search" placeholder="Where are you going?" aria-label="Search stays" />
-        <button class="btn search-btn" type="submit"><i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn search-btn" type="submit" aria-label="Submit stay search"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
       </form>
 
       <div class="nav-actions ms-lg-auto">
