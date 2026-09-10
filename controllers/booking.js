@@ -101,6 +101,30 @@ module.exports.createBooking = async (req, res) => {
   res.render("bookings/confirmation.ejs", { booking });
 };
 
+module.exports.completeDemoPayment = async (req, res) => {
+  const booking = await Booking.findOneAndUpdate(
+    {
+      _id: req.params.bookingId,
+      guest: req.user._id,
+      status: "confirmed",
+      paymentStatus: "unpaid",
+    },
+    {
+      paymentStatus: "demo_paid",
+      paymentReference: `DEMO-${Date.now()}`,
+    },
+    { new: true }
+  ).populate("listing", "title location country price");
+
+  if (!booking) {
+    req.flash("error", "This demo payment is no longer available.");
+    return res.redirect("/profile#trips");
+  }
+
+  req.flash("success", "Demo payment recorded. No money was charged.");
+  res.render("bookings/confirmation.ejs", { booking });
+};
+
 module.exports.cancelBooking = async (req, res) => {
   const booking = await Booking.findOneAndUpdate(
     { _id: req.params.bookingId, guest: req.user._id, status: "confirmed" },
