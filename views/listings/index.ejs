@@ -4,7 +4,25 @@
   <section class="listing-hero">
     <span class="eyebrow">Roamly stays</span>
     <h1>Find a place worth remembering.</h1>
-    <p>Browse distinctive stays, hidden corners and comfortable spaces for your next escape.</p>
+    <p>Search destinations, compare prices and discover your next stay.</p>
+
+    <form class="discovery-search" action="/listings" method="GET" role="search">
+      <div class="discovery-search-field">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <div>
+          <label for="heroSearch">Where</label>
+          <input id="heroSearch" name="search" value="<%= search %>" placeholder="City, country or stay" autocomplete="off" />
+        </div>
+      </div>
+      <div class="discovery-search-field">
+        <i class="fa-solid fa-location-dot"></i>
+        <div>
+          <label for="heroCountry">Country</label>
+          <input id="heroCountry" name="country" value="<%= country %>" placeholder="Any country" autocomplete="off" />
+        </div>
+      </div>
+      <button class="discovery-search-button" type="submit">Explore <i class="fa-solid fa-arrow-right"></i></button>
+    </form>
   </section>
 
   <div class="filters">
@@ -23,9 +41,9 @@
   </div>
 
   <form class="listing-controls row g-3" action="/listings" method="GET">
-    <div class="col-lg-3 col-md-6">
-      <label class="form-label" for="country">Destination</label>
-      <input class="form-control" id="country" name="country" value="<%= country %>" placeholder="Country or region" />
+    <div class="col-lg-4 col-md-6">
+      <label class="form-label" for="search">Search</label>
+      <input class="form-control" id="search" name="search" value="<%= search %>" placeholder="Stay, city or country" />
     </div>
     <div class="col-lg-2 col-md-6">
       <label class="form-label" for="minPrice">From ₹</label>
@@ -35,7 +53,7 @@
       <label class="form-label" for="maxPrice">To ₹</label>
       <input class="form-control" id="maxPrice" name="maxPrice" type="number" min="0" value="<%= maxPrice %>" placeholder="Max" />
     </div>
-    <div class="col-lg-3 col-md-6">
+    <div class="col-lg-2 col-md-6">
       <label class="form-label" for="sort">Order</label>
       <select class="form-select" id="sort" name="sort">
         <option value="newest" <%= sort === "newest" ? "selected" : "" %>>Recently added</option>
@@ -46,13 +64,17 @@
     </div>
     <div class="col-lg-2 d-flex align-items-end gap-2">
       <button class="btn btn-dark w-100" type="submit"><i class="fa-solid fa-sliders me-1"></i> Refine</button>
-      <a class="btn btn-outline-dark" href="/listings" title="Reset filters"><i class="fa-solid fa-rotate-left"></i></a>
+      <a class="btn btn-outline-dark" href="/listings" title="Clear all filters"><i class="fa-solid fa-rotate-left"></i></a>
     </div>
   </form>
 
   <% if (search || country || minPrice || maxPrice) { %>
-    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
-      <p class="text-muted mb-0">Showing <strong><%= allListings.length %></strong> stay(s) matching your filters.</p>
+    <div class="results-summary mt-4 mb-2">
+      <div>
+        <span class="eyebrow">Your search</span>
+        <p class="mb-0"><strong><%= allListings.length %></strong> stay(s) on this page match your filters.</p>
+      </div>
+      <a href="/listings">Clear search</a>
     </div>
   <% } %>
 
@@ -60,7 +82,7 @@
     <% for(let listing of allListings){ %>
       <a href="/listings/<%= listing._id %>" class="listing-link">
         <article class="listing-card h-100">
-          <img src="<%= listing.image?.url || '/images/default.jpg' %>" class="card-img-top" alt="<%= listing.title %>" />
+          <img src="<%= listing.image?.url || '/images/default.jpg' %>" class="card-img-top" alt="<%= listing.title %>" loading="lazy" />
           <div class="card-body">
             <div class="d-flex justify-content-between gap-2">
               <div>
@@ -79,8 +101,8 @@
   <% if (allListings.length === 0) { %>
     <div class="empty-state text-center py-5 px-3 mt-4">
       <div class="empty-icon"><i class="fa-regular fa-compass"></i></div>
-      <h4>Nothing matched this search</h4>
-      <p class="text-muted">Try a different destination or widen your price range.</p>
+      <h4>No stays found</h4>
+      <p class="text-muted">Try a different destination, remove a filter or widen your price range.</p>
       <a class="btn btn-dark" href="/listings">Explore every stay</a>
     </div>
   <% } %>
