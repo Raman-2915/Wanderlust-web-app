@@ -23,8 +23,17 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const userRouter = require("./routes/user.js");
+const csrf = require("./middleware/csrf.js");
+const securityHeaders = require("./middleware/securityHeaders.js");
 
 const db_url = process.env.ATLASDB_URL;
+const isProduction = process.env.NODE_ENV === "production";
+
+if (isProduction && !process.env.SECRET) {
+  throw new Error("SECRET must be configured in production");
+}
+
+const sessionSecret = process.env.SECRET || "development-only-secret";
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -33,9 +42,10 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
+app.use(securityHeaders);
 
 const sessionOptions = {
-  secret: process.env.SECRET || "test-secret",
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -50,7 +60,7 @@ const sessionOptions = {
 if (process.env.NODE_ENV !== "test") {
   sessionOptions.store = MongoStore.create({
     mongoUrl: db_url,
-    crypto: { secret: process.env.SECRET },
+    crypto: { secret: sessionSecret },
     touchAfter: 24 * 3600,
   });
 
@@ -61,6 +71,8 @@ if (process.env.NODE_ENV !== "test") {
 
 app.use(session(sessionOptions));
 app.use(flash());
+app.use(csrf.attachToken);
+app.use(csrf.protectBrowserRequests);
 
 app.use(passport.initialize());
 app.use(passport.session());

@@ -19,16 +19,16 @@
         <% if (currUser) { %>
           <div class="mt-4">
             <% if (isFavorite) { %>
-              <form method="POST" action="/listings/<%= listing._id %>/favorite?_method=DELETE"><button class="btn btn-outline-dark" type="submit"><i class="fa-solid fa-heart me-2"></i>Saved to your collection</button></form>
+              <form method="POST" action="/listings/<%= listing._id %>/favorite?_method=DELETE"><input type="hidden" name="_csrf" value="<%= csrfToken %>" /><button class="btn btn-outline-dark" type="submit"><i class="fa-solid fa-heart me-2"></i>Saved to your collection</button></form>
             <% } else { %>
-              <form method="POST" action="/listings/<%= listing._id %>/favorite"><button class="btn btn-outline-dark" type="submit"><i class="fa-regular fa-heart me-2"></i>Save for later</button></form>
+              <form method="POST" action="/listings/<%= listing._id %>/favorite"><input type="hidden" name="_csrf" value="<%= csrfToken %>" /><button class="btn btn-outline-dark" type="submit"><i class="fa-regular fa-heart me-2"></i>Save for later</button></form>
             <% } %>
           </div>
         <% } %>
       </div>
 
       <% if (currUser && currUser._id.equals(listing.owner._id)) { %>
-        <div class="d-flex gap-2 mt-4"><a href="/listings/<%= listing._id %>/edit" class="btn btn-dark"><i class="fa-solid fa-pen me-2"></i>Edit stay</a><form method="post" action="/listings/<%= listing._id %>/delete?_method=delete"><button class="btn btn-outline-dark" type="submit"><i class="fa-regular fa-trash-can me-2"></i>Remove stay</button></form></div>
+        <div class="d-flex gap-2 mt-4"><a href="/listings/<%= listing._id %>/edit" class="btn btn-dark"><i class="fa-solid fa-pen me-2"></i>Edit stay</a><form method="post" action="/listings/<%= listing._id %>/delete?_method=delete"><input type="hidden" name="_csrf" value="<%= csrfToken %>" /><button class="btn btn-outline-dark" type="submit"><i class="fa-regular fa-trash-can me-2"></i>Remove stay</button></form></div>
       <% } %>
     </div>
 
@@ -38,7 +38,7 @@
           <span class="eyebrow">Plan your stay</span>
           <h3 class="mt-2">Reserve this place</h3>
           <p class="text-muted">₹<%= listing.price.toLocaleString("en-IN") %> per night</p>
-          <form method="POST" action="/listings/<%= listing._id %>/bookings" id="booking-form">
+          <form method="POST" action="/listings/<%= listing._id %>/bookings" id="booking-form"><input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <div class="row g-3 mt-1">
               <div class="col-md-6"><label class="form-label" for="checkIn">Check-in</label><input class="form-control" type="date" id="checkIn" name="booking[checkIn]" required /></div>
               <div class="col-md-6"><label class="form-label" for="checkOut">Check-out</label><input class="form-control" type="date" id="checkOut" name="booking[checkOut]" required /></div>
@@ -62,7 +62,7 @@
       <span class="eyebrow">Guest notes</span>
       <h3 class="mt-2">Reviews from the community</h3>
       <% if (currUser) { %>
-        <form method="POST" action="/listings/<%= listing._id %>/reviews" novalidate class="needs-validation mt-4">
+        <form method="POST" action="/listings/<%= listing._id %>/reviews" novalidate class="needs-validation mt-4"><input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <label for="rating" class="form-label">Your rating</label>
           <fieldset class="starability-slot mb-3">
             <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
@@ -79,7 +79,7 @@
       <div class="row g-3 mt-2">
         <% if (listing.reviews.length === 0) { %><p class="text-muted">No reviews yet. Be the first to share your experience.</p><% } %>
         <% for (review of listing.reviews){ %>
-          <div class="col-md-6"><div class="review-card h-100"><div class="d-flex justify-content-between"><strong>@<%= review.author.username %></strong><span class="badge text-bg-dark"><%= review.rating %>/5</span></div><p class="text-muted small mt-2 mb-2"><%= review.comment %></p><% if (currUser && review.author._id.equals(currUser._id)) { %><form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"><button class="btn btn-sm btn-outline-dark" type="submit">Delete review</button></form><% } %></div></div>
+          <div class="col-md-6"><div class="review-card h-100"><div class="d-flex justify-content-between"><strong>@<%= review.author.username %></strong><span class="badge text-bg-dark"><%= review.rating %>/5</span></div><p class="text-muted small mt-2 mb-2"><%= review.comment %></p><% if (currUser && review.author._id.equals(currUser._id)) { %><form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"><input type="hidden" name="_csrf" value="<%= csrfToken %>" /><button class="btn btn-sm btn-outline-dark" type="submit">Delete review</button></form><% } %></div></div>
         <% } %>
       </div>
     </div>
