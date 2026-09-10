@@ -44,6 +44,11 @@ module.exports.createBooking = async (req, res) => {
     return res.redirect(`/listings/${id}`);
   }
 
+  if (guestCount > (listing.maxGuests || 1)) {
+    req.flash("error", `This stay accommodates up to ${listing.maxGuests || 1} guest(s).`);
+    return res.redirect(`/listings/${id}`);
+  }
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   if (start < today) {

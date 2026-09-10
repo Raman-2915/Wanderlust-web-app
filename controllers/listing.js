@@ -7,6 +7,7 @@ module.exports.index = async (req, res) => {
     country = "",
     minPrice = "",
     maxPrice = "",
+    category = "",
     sort = "newest",
   } = req.query;
 
@@ -25,6 +26,10 @@ module.exports.index = async (req, res) => {
 
   if (country.trim()) {
     filter.country = new RegExp(country.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+  }
+
+  if (category) {
+    filter.category = category;
   }
 
   if (minPrice !== "" || maxPrice !== "") {
@@ -61,6 +66,8 @@ module.exports.index = async (req, res) => {
     minPrice,
     maxPrice,
     sort,
+    category,
+    totalListings,
     currentPage,
     totalPages,
   });

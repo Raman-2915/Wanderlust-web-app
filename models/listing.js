@@ -30,6 +30,35 @@ const listingSchema = new Schema(
       type: String,
       trim: true,
     },
+    category: {
+      type: String,
+      enum: ["trending", "private-home", "city", "nature", "waterfront", "getaway"],
+      default: "trending",
+    },
+    maxGuests: {
+      type: Number,
+      min: 1,
+      default: 1,
+    },
+    bedrooms: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    beds: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    bathrooms: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    amenities: {
+      type: [String],
+      default: [],
+    },
     reviews: [
       {
         type: Schema.Types.ObjectId,

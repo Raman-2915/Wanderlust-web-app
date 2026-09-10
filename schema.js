@@ -8,6 +8,14 @@ module.exports.listingSchema = Joi.object({
     country: Joi.string().required(),
     price: Joi.number().required().min(0),
     image: Joi.string().allow("", null),
+    category: Joi.string()
+      .valid("trending", "private-home", "city", "nature", "waterfront", "getaway")
+      .required(),
+    maxGuests: Joi.number().integer().min(1).required(),
+    bedrooms: Joi.number().integer().min(0).required(),
+    beds: Joi.number().integer().min(0).required(),
+    bathrooms: Joi.number().min(0).required(),
+    amenities: Joi.alternatives().try(Joi.array().items(Joi.string()), Joi.string()).default([]),
   }).required(),
 });
 
