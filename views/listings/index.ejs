@@ -26,12 +26,10 @@
   </section>
 
   <div class="filters">
-    <div class="filter"><i class="fa-solid fa-fire"></i><p>Trending</p></div>
-    <div class="filter"><i class="fa-solid fa-house"></i><p>Private homes</p></div>
-    <div class="filter"><i class="fa-solid fa-city"></i><p>City stays</p></div>
-    <div class="filter"><i class="fa-solid fa-mountain-sun"></i><p>Nature</p></div>
-    <div class="filter"><i class="fa-solid fa-water"></i><p>By the water</p></div>
-    <div class="filter"><i class="fa-solid fa-campground"></i><p>Getaways</p></div>
+    <% const categories = [["trending", "fa-fire", "Trending"], ["private-home", "fa-house", "Private homes"], ["city", "fa-city", "City stays"], ["nature", "fa-mountain-sun", "Nature"], ["waterfront", "fa-water", "By the water"], ["getaway", "fa-campground", "Getaways"]]; %>
+    <% categories.forEach(([value, icon, label]) => { %>
+      <a class="filter <%= category === value ? "active" : "" %>" href="/listings?category=<%= value %>"><i class="fa-solid <%= icon %>"></i><p><%= label %></p></a>
+    <% }) %>
     <div class="tax-toggle">
       <div class="form-check form-switch mb-0">
         <input class="form-check-input" type="checkbox" role="switch" id="themeSwitch" aria-label="Toggle dark theme" />
@@ -41,6 +39,7 @@
   </div>
 
   <form class="listing-controls row g-3" action="/listings" method="GET">
+    <% if (category) { %><input type="hidden" name="category" value="<%= category %>" /><% } %>
     <div class="col-lg-4 col-md-6">
       <label class="form-label" for="search">Search</label>
       <input class="form-control" id="search" name="search" value="<%= search %>" placeholder="Stay, city or country" />
@@ -68,11 +67,11 @@
     </div>
   </form>
 
-  <% if (search || country || minPrice || maxPrice) { %>
+  <% if (search || country || minPrice || maxPrice || category) { %>
     <div class="results-summary mt-4 mb-2">
       <div>
         <span class="eyebrow">Your search</span>
-        <p class="mb-0"><strong><%= allListings.length %></strong> stay(s) on this page match your filters.</p>
+        <p class="mb-0"><strong><%= totalListings %></strong> stay(s) match your filters.</p>
       </div>
       <a href="/listings">Clear search</a>
     </div>
@@ -110,11 +109,11 @@
   <% if (totalPages > 1) { %>
     <nav aria-label="Listing pagination" class="mt-4">
       <ul class="pagination justify-content-center">
-        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>"><a class="page-link" href="/listings?page=<%= currentPage - 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Previous</a></li>
+        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>"><a class="page-link" href="/listings?page=<%= currentPage - 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&category=<%= category %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Previous</a></li>
         <% for(let page = 1; page <= totalPages; page++) { %>
-          <li class="page-item <%= page === currentPage ? 'active' : '' %>"><a class="page-link" href="/listings?page=<%= page %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>"><%= page %></a></li>
+          <li class="page-item <%= page === currentPage ? 'active' : '' %>"><a class="page-link" href="/listings?page=<%= page %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&category=<%= category %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>"><%= page %></a></li>
         <% } %>
-        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>"><a class="page-link" href="/listings?page=<%= currentPage + 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Next</a></li>
+        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>"><a class="page-link" href="/listings?page=<%= currentPage + 1 %>&search=<%= encodeURIComponent(search) %>&country=<%= encodeURIComponent(country) %>&category=<%= category %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&sort=<%= sort %>">Next</a></li>
       </ul>
     </nav>
   <% } %>
