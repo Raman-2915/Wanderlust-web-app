@@ -12,6 +12,13 @@
       <div class="mb-4 upload-box"><label for="image" class="form-label">Cover photo</label><input type="file" name="listing[image]" id="image" class="form-control" accept="image/png,image/jpeg" required /><div class="form-text text-muted">JPG or PNG · maximum 5MB</div><div class="invalid-feedback">Please choose an image.</div></div>
       <div class="row g-3"><div class="mb-3 col-md-5"><label for="price" class="form-label">Price per night</label><input type="number" name="listing[price]" id="price" min="0" placeholder="1200" class="form-control" required /><div class="invalid-feedback">Enter a valid price.</div></div><div class="mb-3 col-md-7"><label for="country" class="form-label">Country</label><input type="text" name="listing[country]" id="country" placeholder="India" class="form-control" required /><div class="invalid-feedback">Enter a country.</div></div></div>
       <div class="mb-4"><label for="location" class="form-label">Location</label><input type="text" name="listing[location]" id="location" placeholder="New Delhi" class="form-control" required /><div class="invalid-feedback">Enter a location.</div></div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6"><label for="category" class="form-label">Stay category</label><select name="listing[category]" id="category" class="form-select" required><option value="trending">Trending</option><option value="private-home">Private home</option><option value="city">City stay</option><option value="nature">Nature</option><option value="waterfront">By the water</option><option value="getaway">Getaway</option></select></div>
+        <div class="col-md-6"><label for="maxGuests" class="form-label">Maximum guests</label><input type="number" name="listing[maxGuests]" id="maxGuests" class="form-control" min="1" value="1" required /></div>
+        <div class="col-md-4"><label for="bedrooms" class="form-label">Bedrooms</label><input type="number" name="listing[bedrooms]" id="bedrooms" class="form-control" min="0" value="0" required /></div>
+        <div class="col-md-4"><label for="beds" class="form-label">Beds</label><input type="number" name="listing[beds]" id="beds" class="form-control" min="0" value="0" required /></div>
+        <div class="col-md-4"><label for="bathrooms" class="form-label">Bathrooms</label><input type="number" name="listing[bathrooms]" id="bathrooms" class="form-control" min="0" step="0.5" value="1" required /></div>
+      </div>
       <div class="d-flex flex-wrap gap-2 pt-2"><button class="btn btn-dark px-4" type="submit"><i class="fa-solid fa-plus me-2"></i>Publish stay</button><a class="btn btn-outline-dark px-4" href="/listings">Cancel</a></div>
     </form>
   </div>
