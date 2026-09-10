@@ -6,6 +6,7 @@
     <h1 class="mt-2">Share a place people will love.</h1>
     <p class="form-help">Add the details guests need to discover your stay. You can update everything later.</p>
     <form method="post" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <div class="mb-4"><label for="title" class="form-label">Stay name</label><input type="text" name="listing[title]" id="title" placeholder="e.g. Sunlit apartment near the city" class="form-control" required /><div class="valid-feedback">Looks good.</div></div>
       <div class="mb-4"><label for="description" class="form-label">About the stay</label><textarea name="listing[description]" id="description" class="form-control" rows="5" placeholder="Tell guests what makes this place special..." required></textarea><div class="invalid-feedback">Add a short description.</div></div>
       <div class="mb-4 upload-box"><label for="image" class="form-label">Cover photo</label><input type="file" name="listing[image]" id="image" class="form-control" accept="image/png,image/jpeg" required /><div class="form-text text-muted">JPG or PNG · maximum 5MB</div><div class="invalid-feedback">Please choose an image.</div></div>
