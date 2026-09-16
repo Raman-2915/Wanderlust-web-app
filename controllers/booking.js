@@ -41,6 +41,7 @@ module.exports.createBooking = async (req, res) => {
   const conflictingBooking = await Booking.findOne({
     listing: id,
     status: "confirmed",
+    paymentStatus: "paid",
     checkIn: { $lt: end },
     checkOut: { $gt: start },
   });
@@ -59,16 +60,40 @@ module.exports.createBooking = async (req, res) => {
     checkOut: end,
     guests: guestCount,
     totalPrice,
+    status: "confirmed",
+    paymentStatus: "pending",
+    paymentMethod: "demo_qr",
   });
 
   await booking.populate("listing", "title location country price");
+  res.render("bookings/payment.ejs", { booking });
+};
+
+module.exports.completeDemoPayment = async (req, res) => {
+  const booking = await Booking.findOne({
+    _id: req.params.bookingId,
+    guest: req.user._id,
+    status: "confirmed",
+    paymentStatus: "pending",
+  }).populate("listing", "title location country price");
+
+  if (!booking) {
+    req.flash("error", "Payment session expired or booking was not found.");
+    return res.redirect("/profile");
+  }
+
+  booking.paymentStatus = "paid";
+  booking.paymentMethod = "demo_qr";
+  booking.paidAt = new Date();
+  await booking.save();
+
   res.render("bookings/confirmation.ejs", { booking });
 };
 
 module.exports.cancelBooking = async (req, res) => {
   const booking = await Booking.findOneAndUpdate(
     { _id: req.params.bookingId, guest: req.user._id, status: "confirmed" },
-    { status: "cancelled" },
+    { status: "cancelled", paymentStatus: "refunded" },
     { new: true }
   );
 
