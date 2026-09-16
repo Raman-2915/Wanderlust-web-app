@@ -22,6 +22,17 @@ const bookingSchema = new Schema(
       enum: ["confirmed", "cancelled"],
       default: "confirmed",
     },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "refunded"],
+      default: "pending",
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["demo_qr", "online", "cash"],
+      default: "demo_qr",
+    },
+    paidAt: { type: Date },
   },
   { timestamps: true }
 );
