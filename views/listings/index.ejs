@@ -4,25 +4,36 @@
   <section class="listing-hero">
     <span class="eyebrow">Roamly stays</span>
     <h1>Find a place worth remembering.</h1>
-    <p>Search destinations, compare prices and discover your next stay.</p>
+    <p>Search by destination, budget or stay type and make your next trip easier to plan.</p>
 
     <form class="discovery-search" action="/listings" method="GET" role="search">
-      <div class="discovery-search-field">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <div>
-          <label for="heroSearch">Where</label>
-          <input id="heroSearch" name="search" value="<%= search %>" placeholder="City, country or stay" autocomplete="off" />
+      <div class="discovery-search-field discovery-search-main">
+        <span class="discovery-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <div class="discovery-copy">
+          <label for="heroSearch">Destination or stay</label>
+          <input id="heroSearch" name="search" value="<%= search %>" placeholder="Try Goa, Manali, villa..." autocomplete="off" />
         </div>
       </div>
+      <div class="discovery-divider"></div>
       <div class="discovery-search-field">
-        <i class="fa-solid fa-location-dot"></i>
-        <div>
+        <span class="discovery-icon"><i class="fa-solid fa-location-dot"></i></span>
+        <div class="discovery-copy">
           <label for="heroCountry">Country</label>
           <input id="heroCountry" name="country" value="<%= country %>" placeholder="Any country" autocomplete="off" />
         </div>
       </div>
-      <button class="discovery-search-button" type="submit">Explore <i class="fa-solid fa-arrow-right"></i></button>
+      <button class="discovery-search-button" type="submit">
+        <span>Explore stays</span><i class="fa-solid fa-arrow-right"></i>
+      </button>
     </form>
+
+    <div class="search-hints">
+      <span>Popular:</span>
+      <a href="/listings?search=Goa">Goa</a>
+      <a href="/listings?search=Manali">Manali</a>
+      <a href="/listings?search=Jaipur">Jaipur</a>
+      <a href="/listings?search=Beach">Beach stays</a>
+    </div>
   </section>
 
   <div class="filters">
@@ -118,18 +129,4 @@
       </ul>
     </nav>
   <% } %>
-
-  <script>
-    const themeSwitch = document.getElementById("themeSwitch");
-    if (themeSwitch) {
-      themeSwitch.checked = document.documentElement.getAttribute("data-theme") === "dark";
-      themeSwitch.addEventListener("change", () => {
-        const theme = themeSwitch.checked ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme", theme);
-        localStorage.setItem("roamly-theme", theme);
-        const navToggle = document.getElementById("themeToggle");
-        if (navToggle) navToggle.innerHTML = theme === "dark" ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-      });
-    }
-  </script>
 </div>
