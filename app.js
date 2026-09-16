@@ -23,16 +23,22 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const userRouter = require("./routes/user.js");
+const { securityHeaders } = require("./middleware/security.js");
 
 const db_url = process.env.ATLASDB_URL;
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(securityHeaders);
+app.use(express.urlencoded({ extended: true, limit: "100kb" }));
+app.use(express.json({ limit: "100kb" }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
+
+if (process.env.NODE_ENV === "production" && !process.env.SECRET) {
+  throw new Error("SECRET is required in production");
+}
 
 const sessionOptions = {
   secret: process.env.SECRET || "test-secret",
